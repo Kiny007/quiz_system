@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>抢答系统 · 大屏展示</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050912;
+    --surface: #0b1422;
+    --surface2: #10192e;
+    --border: #162a4a;
+    --accent: #00d4ff;
+    --accent2: #0066ff;
+    --gold: #ffd700;
+    --gold2: #ffaa00;
+    --green: #00ff88;
+    --red: #ff4455;
+    --text: #e0f0ff;
+    --muted: #3a5a7a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans SC', sans-serif;
+    background-image:
+      radial-gradient(ellipse at 50% -10%, rgba(0,102,255,0.15) 0%, transparent 60%),
+      radial-gradient(ellipse at 10% 90%, rgba(0,212,255,0.06) 0%, transparent 40%),
+      radial-gradient(ellipse at 90% 90%, rgba(255,215,0,0.04) 0%, transparent 40%);
+  }
+
+  /* 背景粒子网格 */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+
+  /* 顶部标题栏 */
+  .header {
+    position: relative;
+    padding: 18px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(0,212,255,0.15);
+    background: rgba(5,9,18,0.8);
+    backdrop-filter: blur(20px);
+    z-index: 10;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), var(--accent2), var(--accent), transparent);
+    opacity: 0.6;
+  }
+  .header-logo {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--accent);
+    text-shadow: 0 0 40px rgba(0,212,255,0.7), 0 0 80px rgba(0,212,255,0.3);
+    letter-spacing: 4px;
+  }
+  .header-center {
+    text-align: center;
+  }
+  .header-title {
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: 4px;
+    background: linear-gradient(135deg, #ffffff, var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .header-subtitle { font-size: 12px; color: var(--muted); letter-spacing: 3px; margin-top: 2px; }
+  .header-right {
+    text-align: right;
+    display: flex; flex-direction: column; align-items: flex-end; gap: 4px;
+  }
+  .live-badge {
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(0,230,118,0.1);
+    border: 1px solid rgba(0,230,118,0.3);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    color: var(--green);
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+  .live-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 8px var(--green);
+    animation: blink 1s infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1}50%{opacity:0.3} }
+  .clock {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 16px;
+    color: var(--muted);
+    letter-spacing: 2px;
+  }
+
+  /* 主布局 */
+  .main-layout {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    height: calc(100vh - 90px);
+    gap: 0;
+  }
+
+  /* 左区：抢答聚焦 */
+  .left-zone {
+    padding: 30px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    overflow: hidden;
+  }
+
+  /* 轮次显示 */
+  .round-display {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .round-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 20px;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .round-label { font-size: 10px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; }
+  .round-num {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 40px; font-weight: 900;
+    color: var(--accent);
+    text-shadow: 0 0 30px rgba(0,212,255,0.5);
+    line-height: 1;
+  }
+  .status-block {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 24px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .status-icon { font-size: 28px; }
+  .status-text-main { font-size: 18px; font-weight: 700; }
+  .status-text-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  /* 大屏优胜展示区 */
+  .winner-zone {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .winner-card {
+    position: relative;
+    background: linear-gradient(135deg, rgba(255,215,0,0.08), rgba(255,107,53,0.05));
+    border: 1px solid rgba(255,215,0,0.3);
+    border-radius: 24px;
+    padding: 40px 60px;
+    text-align: center;
+    width: 100%;
+    max-width: 700px;
+    overflow: hidden;
+  }
+  .winner-card::before {
+    content: '';
+    position: absolute; top: 0; left: -100%;
+    width: 50%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,215,0,0.07), transparent);
+    animation: shine 4s infinite;
+  }
+  @keyframes shine { 0%{left:-100%} 100%{left:200%} }
+  .winner-label {
+    font-size: 12px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  .winner-rank-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--gold), var(--gold2));
+    color: #000;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 13px;
+    font-weight: 900;
+    padding: 4px 16px;
+    border-radius: 20px;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 20px rgba(255,215,0,0.4);
+  }
+  .winner-name-big {
+    font-size: 56px;
+    font-weight: 900;
+    color: var(--gold);
+    text-shadow: 0 0 40px rgba(255,215,0,0.6), 0 0 80px rgba(255,215,0,0.2);
+    line-height: 1.1;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+    animation: winner-pop 0.5s cubic-bezier(0.175,0.885,0.32,1.275);
+  }
+  @keyframes winner-pop {
+    from { transform: scale(0.5); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .winner-time-big {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 20px;
+    color: rgba(255,215,0,0.6);
+    letter-spacing: 2px;
+  }
+  .winner-members {
+    margin-top: 14px;
+    font-size: 14px;
+    color: rgba(255,215,0,0.5);
+    letter-spacing: 1px;
+  }
+  /* 排名列表（本轮） */
+  .buzz-others {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 16px;
+  }
+  .buzz-other-pill {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 30px;
+    padding: 6px 16px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .buzz-other-pill span { color: var(--text); }
+
+  /* 空态 */
+  .empty-winner {
+    text-align: center;
+    color: var(--muted);
+  }
+  .empty-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+    opacity: 0.3;
+  }
+  .empty-text { font-size: 18px; color: var(--muted); }
+  .empty-sub { font-size: 13px; color: var(--border); margin-top: 6px; }
+  /* 抢答中动效 */
+  .buzzing-anim {
+    font-size: 80px;
+    animation: buzz-shake 0.3s infinite;
+  }
+  @keyframes buzz-shake {
+    0%,100%{transform:rotate(-5deg) scale(1.1)}
+    50%{transform:rotate(5deg) scale(0.9)}
+  }
+
+  /* 右区：排行榜 */
+  .right-zone {
+    background: rgba(11,20,34,0.8);
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .rank-header {
+    padding: 20px 24px 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .rank-header-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 2px;
+  }
+  .total-teams { font-size: 12px; color: var(--muted); }
+
+  /* 滚动排行区 */
+  .rank-scroll-wrap {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+  }
+  .rank-scroll {
+    position: absolute;
+    width: 100%;
+    animation: scroll-up linear infinite;
+  }
+  @keyframes scroll-up {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-50%); }
+  }
+  .rank-row {
+    display: flex;
+    align-items: center;
+    padding: 16px 24px;
+    border-bottom: 1px solid rgba(22,42,74,0.5);
+    gap: 14px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+  }
+  .rank-row::after {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: transparent;
+    transition: all 0.3s;
+  }
+  .rank-row.r1::after { background: var(--gold); box-shadow: 0 0 10px var(--gold); }
+  .rank-row.r2::after { background: #c0c0c0; }
+  .rank-row.r3::after { background: #cd7f32; }
+  .rank-pos {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 18px; font-weight: 900;
+    width: 32px; text-align: center;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+  .rank-pos.r1 { color: var(--gold); text-shadow: 0 0 15px rgba(255,215,0,0.5); }
+  .rank-pos.r2 { color: #c0c0c0; }
+  .rank-pos.r3 { color: #cd7f32; }
+  .rank-info { flex: 1; overflow: hidden; }
+  .rank-name {
+    font-size: 16px; font-weight: 700;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .rank-name.r1 { color: var(--gold); }
+  .rank-members-sm { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .rank-score {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 22px; font-weight: 900;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+  .rank-score.r1 { color: var(--gold); font-size: 26px; text-shadow: 0 0 15px rgba(255,215,0,0.4); }
+  /* 分数条 */
+  .score-bar-wrap {
+    margin-top: 4px;
+    height: 3px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .score-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 2px;
+    transition: width 0.8s ease;
+  }
+  .score-bar.r1 { background: linear-gradient(90deg, var(--gold), var(--gold2)); }
+
+  /* 底部跑马灯 */
+  .ticker {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 36px;
+    background: rgba(5,9,18,0.95);
+    border-top: 1px solid rgba(0,212,255,0.15);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+  }
+  .ticker-label {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #000;
+    font-weight: 900;
+    font-size: 12px;
+    padding: 0 14px;
+    height: 100%;
+    display: flex; align-items: center;
+    flex-shrink: 0;
+    letter-spacing: 1px;
+  }
+  .ticker-content {
+    display: flex;
+    animation: ticker-scroll 20s linear infinite;
+    white-space: nowrap;
+    align-items: center;
+  }
+  @keyframes ticker-scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  .ticker-item {
+    padding: 0 30px;
+    font-size: 13px;
+    color: var(--muted);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .ticker-item .t-gold { color: var(--gold); font-weight: 700; }
+  .ticker-sep { color: var(--border); margin: 0 10px; }
+</style>
+</head>
+<body>
+
+<!-- 顶部标题栏 -->
+<div class="header">
+  <div class="header-logo">⚡ QUIZ</div>
+  <div class="header-center">
+    <div class="header-title">知识竞答系统</div>
+    <div class="header-subtitle">LIVE QUIZ MASTER · DISPLAY</div>
+  </div>
+  <div class="header-right">
+    <div class="live-badge">
+      <div class="live-dot"></div>
+      LIVE
+    </div>
+    <div class="clock" id="clock">00:00:00</div>
+  </div>
+</div>
+
+<!-- 主内容区 -->
+<div class="main-layout">
+  <!-- 左区 -->
+  <div class="left-zone">
+    <!-- 轮次与状态 -->
+    <div class="round-display">
+      <div class="round-block">
+        <div class="round-label">ROUND</div>
+        <div class="round-num" id="roundNum">01</div>
+      </div>
+      <div class="status-block" id="statusBlock">
+        <div class="status-icon" id="statusIcon">⚪</div>
+        <div>
+          <div class="status-text-main" id="statusMain">等待开始</div>
+          <div class="status-text-sub" id="statusSub">管理员开放抢答后将显示</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 优胜展示大区 -->
+    <div class="winner-zone">
+      <div id="emptyState" class="empty-winner">
+        <div class="empty-icon">🎯</div>
+        <div class="empty-text">等待抢答</div>
+        <div class="empty-sub">管理员开放抢答后，结果将显示于此</div>
+      </div>
+
+      <div id="buzzingState" class="empty-winner" style="display:none;">
+        <div class="buzzing-anim">🔔</div>
+        <div style="font-size:32px;font-weight:900;color:var(--green);text-shadow:0 0 30px rgba(0,255,136,0.6);margin-top:16px;">抢答开放中！</div>
+        <div style="font-size:16px;color:var(--muted);margin-top:8px;">等待选手响应…</div>
+      </div>
+
+      <div class="winner-card" id="winnerCard" style="display:none;">
+        <div class="winner-label">🏆 ROUND WINNER</div>
+        <div class="winner-rank-badge">第一名抢答成功</div>
+        <div class="winner-name-big" id="winnerNameBig">—</div>
+        <div class="winner-time-big" id="winnerTimeBig">—</div>
+        <div class="winner-members" id="winnerMembers"></div>
+        <div class="buzz-others" id="buzzOthers"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 右区：排行榜 -->
+  <div class="right-zone">
+    <div class="rank-header">
+      <div class="rank-header-title">📊 RANKING</div>
+      <div class="total-teams" id="totalTeams">—</div>
+    </div>
+    <div class="rank-scroll-wrap">
+      <div class="rank-scroll" id="rankScroll">
+        <!-- 由JS填充两份以实现无缝滚动 -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 跑马灯 -->
+<div class="ticker">
+  <div class="ticker-label">实时数据</div>
+  <div class="ticker-content" id="tickerContent">
+    <!-- 由JS填充 -->
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+// const STORAGE_KEY = 'quizmaster_state';
+// const BC = new BroadcastChannel('quizmaster');
+const socket = io();
+let appState = defaultState();
+
+// 时钟
+function updateClock() {
+  document.getElementById('clock').textContent =
+    new Date().toLocaleTimeString('zh-CN', { hour12: false });
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// 获取状态
+// function getState() {
+//   try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || defaultState(); }
+//   catch(e) { return defaultState(); }
+// }
+function getState() {
+  return appState;
+}
+
+function defaultState() {
+  return { teams:[], round:1, buzzOpen:false, buzzList:[], scoredRound:false, history:[], onlineTeams:[] };
+}
+
+// 主渲染
+function render(s) {
+  if (!s) s = getState();
+  renderHeader(s);
+  renderWinnerZone(s);
+  renderRankList(s);
+  renderTicker(s);
+}
+
+function renderHeader(s) {
+  document.getElementById('roundNum').textContent = String(s.round).padStart(2, '0');
+  const icon = document.getElementById('statusIcon');
+  const main = document.getElementById('statusMain');
+  const sub = document.getElementById('statusSub');
+  if (s.buzzOpen && s.buzzList.length === 0) {
+    icon.textContent = '🟢';
+    main.textContent = '抢答进行中';
+    main.style.color = 'var(--green)';
+    sub.textContent = '选手可点击抢答按钮';
+  } else if (s.buzzList.length > 0) {
+    icon.textContent = '🏆';
+    main.textContent = `${s.buzzList[0].teamName} 抢答成功`;
+    main.style.color = 'var(--gold)';
+    sub.textContent = '等待裁判判分…';
+  } else {
+    icon.textContent = '⚪';
+    main.textContent = '等待开始';
+    main.style.color = 'var(--text)';
+    sub.textContent = '管理员开放后显示';
+  }
+}
+
+function renderWinnerZone(s) {
+  const empty = document.getElementById('emptyState');
+  const buzzing = document.getElementById('buzzingState');
+  const winnerCard = document.getElementById('winnerCard');
+
+  if (!s.buzzList || s.buzzList.length === 0) {
+    if (s.buzzOpen) {
+      empty.style.display = 'none';
+      buzzing.style.display = 'block';
+      winnerCard.style.display = 'none';
+    } else {
+      empty.style.display = 'block';
+      buzzing.style.display = 'none';
+      winnerCard.style.display = 'none';
+    }
+    return;
+  }
+
+  empty.style.display = 'none';
+  buzzing.style.display = 'none';
+  winnerCard.style.display = 'block';
+
+  const winner = s.buzzList[0];
+  const winnerTeam = s.teams.find(t => t.id === winner.teamId);
+
+  const nameEl = document.getElementById('winnerNameBig');
+  if (nameEl.textContent !== winner.teamName) {
+    nameEl.style.animation = 'none';
+    nameEl.offsetHeight; // reflow
+    nameEl.style.animation = '';
+  }
+  nameEl.textContent = winner.teamName;
+  document.getElementById('winnerTimeBig').textContent =
+    new Date(winner.ts).toLocaleTimeString('zh-CN', { hour12:false, hour:'2-digit', minute:'2-digit', second:'2-digit', fractionalSecondDigits:3 });
+
+  if (winnerTeam && winnerTeam.members && winnerTeam.members.length) {
+    document.getElementById('winnerMembers').textContent = '👥 ' + winnerTeam.members.join(' · ');
+  } else {
+    document.getElementById('winnerMembers').textContent = '';
+  }
+
+  const others = s.buzzList.slice(1);
+  document.getElementById('buzzOthers').innerHTML = others.map((b, i) =>
+    `<div class="buzz-other-pill"><span style="color:var(--muted);">第${i+2}名</span> <span>${b.teamName}</span></div>`
+  ).join('');
+}
+
+function renderRankList(s) {
+  const el = document.getElementById('rankScroll');
+  const totalEl = document.getElementById('totalTeams');
+
+  if (!s.teams || !s.teams.length) {
+    el.innerHTML = '<div style="padding:30px;text-align:center;color:var(--muted);">等待数据…</div>';
+    totalEl.textContent = '—';
+    return;
+  }
+
+  const sorted = [...s.teams].sort((a, b) => b.score - a.score);
+  const maxScore = Math.max(...sorted.map(t => t.score), 1);
+  totalEl.textContent = `共 ${sorted.length} 支队伍`;
+
+  const makeRows = () => sorted.map((t, i) => {
+    const cls = i===0?'r1':i===1?'r2':i===2?'r3':'';
+    const barWidth = maxScore > 0 ? Math.round(t.score / maxScore * 100) : 0;
+    return `
+      <div class="rank-row ${cls}">
+        <div class="rank-pos ${cls}">${i+1}</div>
+        <div class="rank-info">
+          <div class="rank-name ${cls}">${t.name}</div>
+          <div class="rank-members-sm">${t.members && t.members.length ? t.members.join('、') : ''}</div>
+          <div class="score-bar-wrap">
+            <div class="score-bar ${cls}" style="width:${barWidth}%"></div>
+          </div>
+        </div>
+        <div class="rank-score ${cls}">${t.score}</div>
+      </div>
+    `;
+  }).join('');
+
+  // 重复两遍实现无缝滚动
+  el.innerHTML = makeRows() + makeRows();
+
+  // 动态调整滚动速度（队伍多则慢）
+  const totalHeight = sorted.length * 80; // 每行约80px
+  const duration = Math.max(15, sorted.length * 4);
+  el.style.animationDuration = duration + 's';
+}
+
+function renderTicker(s) {
+  const el = document.getElementById('tickerContent');
+  if (!s.teams || !s.teams.length) {
+    el.innerHTML = '<div class="ticker-item">等待数据…</div>';
+    return;
+  }
+  const sorted = [...s.teams].sort((a, b) => b.score - a.score);
+  const items = sorted.map((t, i) =>
+    `<div class="ticker-item">
+      <span style="color:var(--muted);">#${i+1}</span>
+      <span class="t-gold">${t.name}</span>
+      <span style="font-family:'Orbitron',sans-serif;color:var(--accent);">${t.score}分</span>
+    </div><div class="ticker-sep">·</div>`
+  ).join('');
+  const histItems = (s.history || []).slice(0, 5).map(h =>
+    `<div class="ticker-item">
+      <span style="color:var(--muted);">第${h.round}轮</span>
+      <span class="t-gold">${h.winner}</span>
+      <span style="color:${h.delta>0?'var(--green)':'var(--red)'};">${h.delta>0?'+':''}${h.delta}分</span>
+    </div><div class="ticker-sep">·</div>`
+  ).join('');
+  const full = items + histItems;
+  el.innerHTML = full + full; // 两份无缝滚动
+}
+
+// ============================================================
+// 实时同步
+// ============================================================
+// BC.onmessage = (e) => {
+//   if (e.data.type === 'update') render(e.data.state);
+// };
+// window.addEventListener('storage', (e) => {
+//   if (e.key === STORAGE_KEY) {
+//     try { render(JSON.parse(e.newValue)); } catch(err) {}
+//   }
+// });
+
+socket.on('sync_state', (newState) => {
+  appState = newState;
+  render(appState);
+});
+
+// 初始化
+render();
+
+// 轮询保底（每2秒）
+setInterval(() => render(), 2000);
+</script>
+</body>
+</html>

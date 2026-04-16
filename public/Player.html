@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>抢答系统 · 队员端</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080d18;
+    --surface: #0f1929;
+    --surface2: #162235;
+    --border: #1a3a5c;
+    --accent: #00d4ff;
+    --gold: #ffd700;
+    --green: #00e676;
+    --red: #ff4444;
+    --orange: #ff6b35;
+    --text: #ddeeff;
+    --muted: #4a6a8a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans SC', sans-serif;
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse at 50% 0%, rgba(0,212,255,0.08) 0%, transparent 60%);
+  }
+
+  /* 登录页 */
+  .login-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .login-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 40px;
+    width: 400px;
+    max-width: 100%;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 80px rgba(0,212,255,0.05);
+  }
+  .login-logo {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 32px;
+    font-weight: 900;
+    color: var(--accent);
+    text-shadow: 0 0 30px rgba(0,212,255,0.6);
+    margin-bottom: 8px;
+  }
+  .login-subtitle {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 32px;
+    letter-spacing: 1px;
+  }
+  .login-input {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 12px;
+    padding: 14px 18px;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 15px;
+    width: 100%;
+    margin-bottom: 12px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    text-align: center;
+  }
+  .login-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 20px rgba(0,212,255,0.15);
+  }
+  .login-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--accent), #0080aa);
+    color: #000;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: 'Noto Sans SC', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+    margin-top: 8px;
+  }
+  .login-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,212,255,0.3); }
+  .team-suggestion {
+    margin-top: 16px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .team-chips { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-top: 8px; }
+  .team-chip-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .team-chip-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* 主界面 */
+  .main-page { display: none; min-height: 100vh; flex-direction: column; }
+  /* 顶栏 */
+  .topbar {
+    background: rgba(8,13,24,0.95);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(12px);
+  }
+  .team-tag {
+    background: linear-gradient(135deg, var(--surface2), var(--surface));
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .logout-btn {
+    background: none;
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--muted);
+    border-radius: 8px;
+    padding: 5px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Noto Sans SC', sans-serif;
+  }
+  .logout-btn:hover { border-color: var(--red); color: var(--red); }
+
+  /* 抢答区 */
+  .buzz-section {
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  .round-info {
+    text-align: center;
+  }
+  .round-label { font-size: 12px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; }
+  .round-val {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 36px;
+    font-weight: 900;
+    color: var(--accent);
+    text-shadow: 0 0 30px rgba(0,212,255,0.4);
+  }
+  /* 大型抢答按钮 */
+  .buzz-btn-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .buzz-btn-ring {
+    position: absolute;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    border: 2px solid rgba(0,212,255,0.15);
+    animation: ring-rotate 8s linear infinite;
+  }
+  @keyframes ring-rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  .buzz-btn {
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    border: none;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 14px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+    z-index: 2;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 4px;
+    line-height: 1.3;
+    text-align: center;
+  }
+  /* 状态：等待 */
+  .buzz-btn.waiting {
+    background: radial-gradient(circle at 30% 30%, #1a3a5c, #0a1a2e);
+    color: var(--muted);
+    border: 2px solid var(--border);
+    cursor: not-allowed;
+    box-shadow: 0 0 0 rgba(0,0,0,0);
+  }
+  /* 状态：可抢答 */
+  .buzz-btn.ready {
+    background: radial-gradient(circle at 30% 30%, #00ff88, #00aa55);
+    color: #003322;
+    box-shadow: 0 0 40px rgba(0,230,118,0.6), 0 0 80px rgba(0,230,118,0.2);
+    animation: buzz-pulse 1s ease-in-out infinite;
+  }
+  @keyframes buzz-pulse {
+    0%,100% { box-shadow: 0 0 40px rgba(0,230,118,0.6), 0 0 80px rgba(0,230,118,0.2); transform: scale(1); }
+    50% { box-shadow: 0 0 60px rgba(0,230,118,0.9), 0 0 120px rgba(0,230,118,0.3); transform: scale(1.03); }
+  }
+  .buzz-btn.ready:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 70px rgba(0,230,118,0.9), 0 0 130px rgba(0,230,118,0.4);
+  }
+  .buzz-btn.ready:active {
+    transform: scale(0.95);
+  }
+  /* 状态：已抢到 */
+  .buzz-btn.success {
+    background: radial-gradient(circle at 30% 30%, #ffd700, #cc8800);
+    color: #332200;
+    box-shadow: 0 0 50px rgba(255,215,0,0.7), 0 0 100px rgba(255,215,0,0.2);
+    cursor: default;
+  }
+  /* 状态：未抢到 */
+  .buzz-btn.missed {
+    background: radial-gradient(circle at 30% 30%, #333, #1a1a1a);
+    color: #555;
+    border: 2px solid #333;
+    cursor: default;
+  }
+  .buzz-status-msg {
+    font-size: 13px;
+    color: var(--muted);
+    text-align: center;
+    min-height: 20px;
+  }
+  .buzz-status-msg.success { color: var(--gold); font-weight: 700; }
+  .buzz-status-msg.active { color: var(--green); animation: blink 0.8s infinite; }
+  @keyframes blink { 0%,100%{opacity:1}50%{opacity:0.5} }
+
+  /* 分隔 */
+  .divider {
+    width: 100%; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 4px 0;
+  }
+
+  /* 当前轮抢答结果 */
+  .buzz-result-bar {
+    width: 100%;
+    max-width: 500px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .result-header {
+    background: var(--surface2);
+    padding: 10px 16px;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+  }
+  .result-winner-row {
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .result-crown { font-size: 20px; }
+  .result-team { font-size: 16px; font-weight: 700; color: var(--gold); flex: 1; }
+  .result-time { font-size: 11px; color: var(--muted); font-family: 'Orbitron', sans-serif; }
+  .result-others {
+    padding: 0 16px 12px;
+    display: flex; flex-wrap: wrap; gap: 6px;
+  }
+  .result-other-chip {
+    background: var(--bg);
+    border: 1px solid rgba(30,58,95,0.5);
+    border-radius: 6px;
+    padding: 3px 10px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  /* 排行榜 */
+  .rank-section {
+    padding: 0 20px 20px;
+  }
+  .section-title {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-title::before {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .rank-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .rank-row {
+    display: flex; align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(26,58,92,0.4);
+    gap: 12px;
+    transition: background 0.2s;
+  }
+  .rank-row:last-child { border-bottom: none; }
+  .rank-row.my-team {
+    background: rgba(0,212,255,0.05);
+    border-left: 2px solid var(--accent);
+  }
+  .rank-num {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 14px; font-weight: 900;
+    width: 24px; text-align: center;
+    color: var(--muted);
+  }
+  .rank-num.r1 { color: var(--gold); }
+  .rank-num.r2 { color: #c0c0c0; }
+  .rank-num.r3 { color: #cd7f32; }
+  .rank-name { flex: 1; font-size: 14px; font-weight: 600; }
+  .rank-score {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 18px; font-weight: 900;
+    color: var(--accent);
+  }
+  .rank-members { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .my-badge {
+    font-size: 10px;
+    background: var(--accent);
+    color: #000;
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-weight: 700;
+    margin-left: 6px;
+  }
+
+  /* 历史轮次 */
+  .history-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .history-pill {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .history-pill .hw { color: var(--gold); font-weight: 700; }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 30px;
+    padding: 10px 24px;
+    font-size: 14px;
+    z-index: 300;
+    transition: transform 0.3s;
+    white-space: nowrap;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- 登录页 -->
+<div class="login-page" id="loginPage">
+  <div class="login-card">
+    <div class="login-logo">⚡ QUIZ</div>
+    <div class="login-subtitle">知识竞答系统 · 队员端</div>
+    <input class="login-input" id="loginTeamName" placeholder="输入您的队伍名称" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">加入抢答</button>
+    <div class="team-suggestion">
+      <div>— 当前已有队伍 —</div>
+      <div class="team-chips" id="teamSuggestions"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 主界面 -->
+<div class="main-page" id="mainPage">
+  <!-- 顶栏 -->
+  <div class="topbar">
+    <div class="team-tag">
+      <span>👥</span>
+      <span id="myTeamDisplay">—</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div id="roundTagTop" style="font-family:'Orbitron',sans-serif;font-size:13px;color:var(--muted);">R01</div>
+      <button class="logout-btn" onclick="doLogout()">退出</button>
+    </div>
+  </div>
+
+  <!-- 抢答区 -->
+  <div class="buzz-section">
+    <div class="round-info">
+      <div class="round-label">当前轮次</div>
+      <div class="round-val" id="roundVal">01</div>
+    </div>
+
+    <div class="buzz-btn-wrap">
+      <div class="buzz-btn-ring"></div>
+      <button class="buzz-btn waiting" id="buzzBtn" onclick="doBuzz()">
+        <span id="buzzBtnText">等待开放</span>
+      </button>
+    </div>
+
+    <div class="buzz-status-msg" id="buzzStatusMsg">等待管理员开放抢答…</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 本轮结果 -->
+  <div style="padding:16px 20px;">
+    <div class="buzz-result-bar" id="buzzResultBar" style="display:none; margin:0 auto;">
+      <div class="result-header">🎯 本轮抢答结果</div>
+      <div class="result-winner-row">
+        <div class="result-crown">🏆</div>
+        <div>
+          <div class="result-team" id="resultWinner">—</div>
+          <div class="result-time" id="resultTime">—</div>
+        </div>
+      </div>
+      <div class="result-others" id="resultOthers"></div>
+    </div>
+  </div>
+
+  <!-- 实时排行榜 -->
+  <div class="rank-section">
+    <div class="section-title">📊 实时排行榜</div>
+    <div class="rank-card" id="rankCard">
+      <div style="padding:20px;text-align:center;color:var(--muted);font-size:13px;">等待数据…</div>
+    </div>
+  </div>
+
+  <!-- 历史记录 -->
+  <div style="padding:0 20px 30px;">
+    <div class="section-title">📋 历次抢答</div>
+    <div class="history-grid" id="historyGrid">
+      <div style="color:var(--muted);font-size:13px;">暂无记录</div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+// const STORAGE_KEY = 'quizmaster_state';
+// const BC = new BroadcastChannel('quizmaster');
+const socket = io();
+let appState = defaultState(); // 用变量替代本地存储
+
+let myTeamName = '';
+let myTeamId = null;
+let lastRound = 0;
+let hasBuzzed = false;
+
+// ============================================================
+// 登录
+// ============================================================
+function doLogin() {
+  const name = document.getElementById('loginTeamName').value.trim();
+  if (!name) { showToast('请输入队伍名称'); return; }
+  const s = getState();
+  const team = s.teams.find(t => t.name === name);
+  if (!team) { showToast('❌ 未找到该队伍，请联系管理员添加'); return; }
+
+  myTeamName = name;
+  myTeamId = team.id;
+  hasBuzzed = false;
+
+  // 更新在线列表
+  if (!s.onlineTeams) s.onlineTeams = [];
+  if (!s.onlineTeams.includes(name)) s.onlineTeams.push(name);
+  setState(s);
+
+  document.getElementById('loginPage').style.display = 'none';
+  document.getElementById('mainPage').style.display = 'flex';
+  document.getElementById('myTeamDisplay').textContent = myTeamName;
+  render(s);
+  showToast(`欢迎，${name}！`);
+}
+
+function doLogout() {
+  const s = getState();
+  if (s.onlineTeams) s.onlineTeams = s.onlineTeams.filter(n => n !== myTeamName);
+  setState(s);
+  myTeamName = '';
+  myTeamId = null;
+  hasBuzzed = false;
+  document.getElementById('loginPage').style.display = 'flex';
+  document.getElementById('mainPage').style.display = 'none';
+}
+
+// ============================================================
+// 抢答
+// ============================================================
+function doBuzz() {
+  const s = getState();
+  if (!s.buzzOpen) return;
+  if (hasBuzzed) return;
+  // 检查是否已在 buzzList
+  if (s.buzzList.find(b => b.teamId === myTeamId)) return;
+
+  hasBuzzed = true;
+  s.buzzList.push({ teamId: myTeamId, teamName: myTeamName, ts: Date.now() });
+  setState(s);
+  
+  if (s.buzzList[0].teamId === myTeamId) {
+    showToast('🎉 抢答成功！你是第一名！');
+  } else {
+    const rank = s.buzzList.findIndex(b => b.teamId === myTeamId) + 1;
+    showToast(`已抢答，排名第 ${rank}`);
+  }
+}
+
+// ============================================================
+// 渲染
+// ============================================================
+// function getState() {
+//   try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || defaultState(); }
+//   catch(e) { return defaultState(); }
+// }
+function getState() {
+  return appState;
+}
+
+function defaultState() {
+  return { teams:[], round:1, buzzOpen:false, buzzList:[], scoredRound:false, history:[], onlineTeams:[], lastUpdate:0 };
+}
+// function setState(s) {
+//   s.lastUpdate = Date.now();
+//   localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
+//   BC.postMessage({ type:'update', state:s });
+// }
+function setState(s) {
+  s.lastUpdate = Date.now();
+  appState = s; // 更新本地变量
+  socket.emit('update_state', s); // 提交给服务器
+  render(s);
+}
+
+function render(s) {
+  if (!s) s = getState();
+  // 轮次变化 → 重置抢答状态
+  if (s.round !== lastRound) {
+    hasBuzzed = false;
+    lastRound = s.round;
+  }
+  renderBuzzBtn(s);
+  renderBuzzResult(s);
+  renderRankList(s);
+  renderHistory(s);
+  renderTeamSuggestions(s);
+  document.getElementById('roundVal').textContent = String(s.round).padStart(2, '0');
+  document.getElementById('roundTagTop').textContent = `R${String(s.round).padStart(2, '0')}`;
+}
+
+function renderBuzzBtn(s) {
+  const btn = document.getElementById('buzzBtn');
+  const msg = document.getElementById('buzzStatusMsg');
+  const alreadyBuzzed = s.buzzList.find(b => b.teamId === myTeamId);
+  const iWin = s.buzzList.length && s.buzzList[0].teamId === myTeamId;
+
+  if (iWin) {
+    btn.className = 'buzz-btn success';
+    document.getElementById('buzzBtnText').textContent = '🏆 抢答成功';
+    msg.className = 'buzz-status-msg success';
+    msg.textContent = '恭喜！你是本轮第一名！';
+  } else if (alreadyBuzzed) {
+    const rank = s.buzzList.findIndex(b => b.teamId === myTeamId) + 1;
+    btn.className = 'buzz-btn missed';
+    document.getElementById('buzzBtnText').textContent = `第 ${rank} 名`;
+    msg.className = 'buzz-status-msg';
+    msg.textContent = '已抢答，等待裁判判分…';
+  } else if (s.buzzOpen) {
+    btn.className = 'buzz-btn ready';
+    document.getElementById('buzzBtnText').innerHTML = '🔔<br>抢 答';
+    msg.className = 'buzz-status-msg active';
+    msg.textContent = '抢答已开放！立即点击！';
+  } else {
+    btn.className = 'buzz-btn waiting';
+    document.getElementById('buzzBtnText').textContent = '等待开放';
+    msg.className = 'buzz-status-msg';
+    msg.textContent = '等待管理员开放抢答…';
+    hasBuzzed = hasBuzzed && s.buzzList.find(b => b.teamId === myTeamId);
+  }
+}
+
+function renderBuzzResult(s) {
+  const bar = document.getElementById('buzzResultBar');
+  if (!s.buzzList || !s.buzzList.length) {
+    bar.style.display = 'none';
+    return;
+  }
+  bar.style.display = 'block';
+  const winner = s.buzzList[0];
+  document.getElementById('resultWinner').textContent = winner.teamName;
+  document.getElementById('resultTime').textContent =
+    new Date(winner.ts).toLocaleTimeString('zh-CN', { hour12:false, hour:'2-digit', minute:'2-digit', second:'2-digit', fractionalSecondDigits:3 });
+  const others = s.buzzList.slice(1);
+  document.getElementById('resultOthers').innerHTML = others.map((b, i) =>
+    `<div class="result-other-chip">第${i+2}名 · ${b.teamName}</div>`
+  ).join('');
+}
+
+function renderRankList(s) {
+  const el = document.getElementById('rankCard');
+  if (!s.teams || !s.teams.length) {
+    el.innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted);font-size:13px;">等待数据…</div>';
+    return;
+  }
+  const sorted = [...s.teams].sort((a, b) => b.score - a.score);
+  el.innerHTML = sorted.map((t, i) => {
+    const isMe = t.name === myTeamName;
+    return `
+      <div class="rank-row ${isMe ? 'my-team' : ''}">
+        <div class="rank-num ${i===0?'r1':i===1?'r2':i===2?'r3':''}">${i+1}</div>
+        <div>
+          <div class="rank-name">
+            ${t.name}
+            ${isMe ? '<span class="my-badge">我方</span>' : ''}
+          </div>
+          <div class="rank-members">${t.members && t.members.length ? t.members.join('、') : ''}</div>
+        </div>
+        <div class="rank-score">${t.score}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderHistory(s) {
+  const el = document.getElementById('historyGrid');
+  if (!s.history || !s.history.length) {
+    el.innerHTML = '<div style="color:var(--muted);font-size:13px;">暂无记录</div>';
+    return;
+  }
+  el.innerHTML = s.history.slice(0, 15).map(h => `
+    <div class="history-pill">
+      第${h.round}轮 · <span class="hw">${h.winner}</span> · <span style="color:${h.delta>0?'var(--green)':'var(--red)'};">${h.delta>0?'+':''}${h.delta}分</span>
+    </div>
+  `).join('');
+}
+
+function renderTeamSuggestions(s) {
+  const el = document.getElementById('teamSuggestions');
+  if (!s.teams || !s.teams.length) {
+    el.innerHTML = '<span style="color:var(--muted);font-size:12px;">暂无队伍，请等待管理员添加</span>';
+    return;
+  }
+  el.innerHTML = s.teams.map(t =>
+    `<div class="team-chip-btn" onclick="document.getElementById('loginTeamName').value='${t.name}'">${t.name}</div>`
+  ).join('');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// 实时同步
+// BC.onmessage = (e) => {
+//   if (e.data.type === 'update') render(e.data.state);
+// };
+// window.addEventListener('storage', (e) => {
+//   if (e.key === STORAGE_KEY) {
+//     try { render(JSON.parse(e.newValue)); } catch(err) {}
+//   }
+// });
+// 监听服务器下发的最新状态
+socket.on('sync_state', (newState) => {
+  appState = newState;
+  render(appState);
+});
+
+// 离开时从在线列表移除
+window.addEventListener('beforeunload', () => {
+  if (myTeamName) {
+    const s = getState();
+    if (s.onlineTeams) s.onlineTeams = s.onlineTeams.filter(n => n !== myTeamName);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
+  }
+});
+
+// 初始化
+render(getState());
+</script>
+</body>
+</html>
