@@ -31,8 +31,6 @@
       radial-gradient(ellipse at 10% 90%, rgba(0,212,255,0.06) 0%, transparent 40%),
       radial-gradient(ellipse at 90% 90%, rgba(255,215,0,0.04) 0%, transparent 40%);
   }
-
-  /* 背景粒子网格 */
   body::before {
     content: '';
     position: fixed; inset: 0;
@@ -65,18 +63,14 @@
   }
   .header-logo {
     font-family: 'Orbitron', sans-serif;
-    font-size: 28px;
-    font-weight: 900;
+    font-size: 28px; font-weight: 900;
     color: var(--accent);
     text-shadow: 0 0 40px rgba(0,212,255,0.7), 0 0 80px rgba(0,212,255,0.3);
     letter-spacing: 4px;
   }
-  .header-center {
-    text-align: center;
-  }
+  .header-center { text-align: center; }
   .header-title {
-    font-size: 22px;
-    font-weight: 900;
+    font-size: 22px; font-weight: 900;
     letter-spacing: 4px;
     background: linear-gradient(135deg, #ffffff, var(--accent));
     -webkit-background-clip: text;
@@ -94,10 +88,8 @@
     border: 1px solid rgba(0,230,118,0.3);
     border-radius: 20px;
     padding: 4px 12px;
-    font-size: 12px;
-    color: var(--green);
-    font-weight: 700;
-    letter-spacing: 1px;
+    font-size: 12px; color: var(--green);
+    font-weight: 700; letter-spacing: 1px;
   }
   .live-dot {
     width: 7px; height: 7px;
@@ -107,11 +99,16 @@
     animation: blink 1s infinite;
   }
   @keyframes blink { 0%,100%{opacity:1}50%{opacity:0.3} }
-  .clock {
+  /* 需求3: 不显示系统时钟，此处改为当前轮次徽章 */
+  .round-badge-header {
     font-family: 'Orbitron', sans-serif;
-    font-size: 16px;
-    color: var(--muted);
+    font-size: 14px;
+    color: var(--accent);
     letter-spacing: 2px;
+    padding: 3px 12px;
+    background: rgba(0,212,255,0.08);
+    border: 1px solid rgba(0,212,255,0.2);
+    border-radius: 8px;
   }
 
   /* 主布局 */
@@ -122,7 +119,7 @@
     gap: 0;
   }
 
-  /* 左区：抢答聚焦 */
+  /* 左区 */
   .left-zone {
     padding: 30px 40px;
     display: flex;
@@ -132,11 +129,7 @@
   }
 
   /* 轮次显示 */
-  .round-display {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-  }
+  .round-display { display: flex; align-items: center; gap: 20px; }
   .round-block {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -164,7 +157,9 @@
   .status-text-main { font-size: 18px; font-weight: 700; }
   .status-text-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
 
-  /* 大屏优胜展示区 */
+  /* ============================================================
+     需求4: 大屏优胜展示区放大
+  ============================================================ */
   .winner-zone {
     flex: 1;
     display: flex;
@@ -174,104 +169,101 @@
   }
   .winner-card {
     position: relative;
-    background: linear-gradient(135deg, rgba(255,215,0,0.08), rgba(255,107,53,0.05));
-    border: 1px solid rgba(255,215,0,0.3);
-    border-radius: 24px;
-    padding: 40px 60px;
+    background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,107,53,0.06));
+    border: 2px solid rgba(255,215,0,0.4);
+    border-radius: 28px;
+    padding: 50px 70px;
     text-align: center;
     width: 100%;
-    max-width: 700px;
+    max-width: 780px;
     overflow: hidden;
+    box-shadow: 0 0 60px rgba(255,215,0,0.1), inset 0 0 80px rgba(255,215,0,0.04);
   }
   .winner-card::before {
     content: '';
     position: absolute; top: 0; left: -100%;
     width: 50%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,215,0,0.07), transparent);
-    animation: shine 4s infinite;
+    background: linear-gradient(90deg, transparent, rgba(255,215,0,0.08), transparent);
+    animation: shine 3.5s infinite;
   }
   @keyframes shine { 0%{left:-100%} 100%{left:200%} }
   .winner-label {
-    font-size: 12px;
-    letter-spacing: 4px;
+    font-size: 13px;
+    letter-spacing: 5px;
     text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 12px;
+    color: rgba(255,215,0,0.6);
+    margin-bottom: 14px;
+    font-weight: 600;
   }
   .winner-rank-badge {
     display: inline-block;
     background: linear-gradient(135deg, var(--gold), var(--gold2));
     color: #000;
     font-family: 'Orbitron', sans-serif;
-    font-size: 13px;
-    font-weight: 900;
-    padding: 4px 16px;
+    font-size: 14px; font-weight: 900;
+    padding: 5px 20px;
     border-radius: 20px;
     letter-spacing: 2px;
-    margin-bottom: 16px;
-    box-shadow: 0 4px 20px rgba(255,215,0,0.4);
+    margin-bottom: 20px;
+    box-shadow: 0 4px 25px rgba(255,215,0,0.5);
   }
+  /* 需求4: 放大队名——原56px → 72px */
   .winner-name-big {
-    font-size: 56px;
+    font-size: 72px;
     font-weight: 900;
     color: var(--gold);
-    text-shadow: 0 0 40px rgba(255,215,0,0.6), 0 0 80px rgba(255,215,0,0.2);
+    text-shadow: 0 0 50px rgba(255,215,0,0.7), 0 0 100px rgba(255,215,0,0.25);
     line-height: 1.1;
-    letter-spacing: 2px;
-    margin-bottom: 12px;
+    letter-spacing: 3px;
+    margin-bottom: 16px;
     animation: winner-pop 0.5s cubic-bezier(0.175,0.885,0.32,1.275);
   }
   @keyframes winner-pop {
     from { transform: scale(0.5); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
+    to   { transform: scale(1);   opacity: 1; }
   }
-  .winner-time-big {
+  /* 需求3: 展示反应时长，字体放大，显示更醒目 */
+  .winner-reaction-time {
     font-family: 'Orbitron', sans-serif;
-    font-size: 20px;
-    color: rgba(255,215,0,0.6);
-    letter-spacing: 2px;
+    font-size: 28px;
+    font-weight: 700;
+    color: rgba(255,215,0,0.75);
+    letter-spacing: 3px;
+    margin-bottom: 4px;
+  }
+  .winner-reaction-label {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
   }
   .winner-members {
-    margin-top: 14px;
-    font-size: 14px;
+    font-size: 15px;
     color: rgba(255,215,0,0.5);
     letter-spacing: 1px;
+    margin-top: 6px;
   }
-  /* 排名列表（本轮） */
+  /* 其他队排名 */
   .buzz-others {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-top: 16px;
+    display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
+    margin-top: 18px;
   }
   .buzz-other-pill {
     background: rgba(255,255,255,0.04);
     border: 1px solid rgba(255,255,255,0.08);
     border-radius: 30px;
-    padding: 6px 16px;
-    font-size: 13px;
-    color: var(--muted);
+    padding: 6px 18px;
+    font-size: 13px; color: var(--muted);
   }
   .buzz-other-pill span { color: var(--text); }
 
   /* 空态 */
-  .empty-winner {
-    text-align: center;
-    color: var(--muted);
-  }
-  .empty-icon {
-    font-size: 64px;
-    margin-bottom: 16px;
-    opacity: 0.3;
-  }
+  .empty-winner { text-align: center; color: var(--muted); }
+  .empty-icon { font-size: 64px; margin-bottom: 16px; opacity: 0.3; }
   .empty-text { font-size: 18px; color: var(--muted); }
   .empty-sub { font-size: 13px; color: var(--border); margin-top: 6px; }
-  /* 抢答中动效 */
-  .buzzing-anim {
-    font-size: 80px;
-    animation: buzz-shake 0.3s infinite;
-  }
+  .buzzing-anim { font-size: 80px; animation: buzz-shake 0.3s infinite; }
   @keyframes buzz-shake {
     0%,100%{transform:rotate(-5deg) scale(1.1)}
     50%{transform:rotate(5deg) scale(0.9)}
@@ -281,9 +273,7 @@
   .right-zone {
     background: rgba(11,20,34,0.8);
     border-left: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+    display: flex; flex-direction: column; overflow: hidden;
   }
   .rank-header {
     padding: 20px 24px 14px;
@@ -292,44 +282,28 @@
   }
   .rank-header-title {
     font-family: 'Orbitron', sans-serif;
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--accent);
-    letter-spacing: 2px;
+    font-size: 14px; font-weight: 700;
+    color: var(--accent); letter-spacing: 2px;
   }
   .total-teams { font-size: 12px; color: var(--muted); }
-
-  /* 滚动排行区 */
   .rank-scroll-wrap {
-    flex: 1;
-    overflow: hidden;
-    position: relative;
+    flex: 1; overflow: hidden; position: relative;
   }
   .rank-scroll {
-    position: absolute;
-    width: 100%;
+    position: absolute; width: 100%;
     animation: scroll-up linear infinite;
   }
-  @keyframes scroll-up {
-    0% { transform: translateY(0); }
-    100% { transform: translateY(-50%); }
-  }
+  @keyframes scroll-up { 0%{transform:translateY(0)} 100%{transform:translateY(-50%)} }
   .rank-row {
-    display: flex;
-    align-items: center;
+    display: flex; align-items: center;
     padding: 16px 24px;
     border-bottom: 1px solid rgba(22,42,74,0.5);
     gap: 14px;
-    position: relative;
-    overflow: hidden;
-    transition: background 0.3s;
+    position: relative; overflow: hidden;
   }
   .rank-row::after {
-    content: '';
-    position: absolute; left: 0; top: 0; bottom: 0;
-    width: 2px;
-    background: transparent;
-    transition: all 0.3s;
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 2px; background: transparent;
   }
   .rank-row.r1::after { background: var(--gold); box-shadow: 0 0 10px var(--gold); }
   .rank-row.r2::after { background: #c0c0c0; }
@@ -338,8 +312,7 @@
     font-family: 'Orbitron', sans-serif;
     font-size: 18px; font-weight: 900;
     width: 32px; text-align: center;
-    color: var(--muted);
-    flex-shrink: 0;
+    color: var(--muted); flex-shrink: 0;
   }
   .rank-pos.r1 { color: var(--gold); text-shadow: 0 0 15px rgba(255,215,0,0.5); }
   .rank-pos.r2 { color: #c0c0c0; }
@@ -354,62 +327,37 @@
   .rank-score {
     font-family: 'Orbitron', sans-serif;
     font-size: 22px; font-weight: 900;
-    color: var(--accent);
-    flex-shrink: 0;
+    color: var(--accent); flex-shrink: 0;
   }
   .rank-score.r1 { color: var(--gold); font-size: 26px; text-shadow: 0 0 15px rgba(255,215,0,0.4); }
-  /* 分数条 */
-  .score-bar-wrap {
-    margin-top: 4px;
-    height: 3px;
-    background: rgba(255,255,255,0.05);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-  .score-bar {
-    height: 100%;
-    background: linear-gradient(90deg, var(--accent), var(--accent2));
-    border-radius: 2px;
-    transition: width 0.8s ease;
-  }
+  /* 需求1: 负分红色显示 */
+  .rank-score.negative { color: var(--red); }
+  .score-bar-wrap { margin-top: 4px; height: 3px; background: rgba(255,255,255,0.05); border-radius: 2px; overflow: hidden; }
+  .score-bar { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 2px; transition: width 0.8s ease; }
   .score-bar.r1 { background: linear-gradient(90deg, var(--gold), var(--gold2)); }
 
   /* 底部跑马灯 */
   .ticker {
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
+    position: fixed; bottom: 0; left: 0; right: 0;
     height: 36px;
     background: rgba(5,9,18,0.95);
     border-top: 1px solid rgba(0,212,255,0.15);
-    overflow: hidden;
-    display: flex;
-    align-items: center;
+    overflow: hidden; display: flex; align-items: center;
   }
   .ticker-label {
     background: linear-gradient(135deg, var(--accent), var(--accent2));
-    color: #000;
-    font-weight: 900;
-    font-size: 12px;
-    padding: 0 14px;
-    height: 100%;
+    color: #000; font-weight: 900; font-size: 12px;
+    padding: 0 14px; height: 100%;
     display: flex; align-items: center;
-    flex-shrink: 0;
-    letter-spacing: 1px;
+    flex-shrink: 0; letter-spacing: 1px;
   }
   .ticker-content {
-    display: flex;
-    animation: ticker-scroll 20s linear infinite;
-    white-space: nowrap;
-    align-items: center;
+    display: flex; animation: ticker-scroll 20s linear infinite;
+    white-space: nowrap; align-items: center;
   }
-  @keyframes ticker-scroll {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-  }
+  @keyframes ticker-scroll { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
   .ticker-item {
-    padding: 0 30px;
-    font-size: 13px;
-    color: var(--muted);
+    padding: 0 30px; font-size: 13px; color: var(--muted);
     display: flex; align-items: center; gap: 8px;
   }
   .ticker-item .t-gold { color: var(--gold); font-weight: 700; }
@@ -418,7 +366,6 @@
 </head>
 <body>
 
-<!-- 顶部标题栏 -->
 <div class="header">
   <div class="header-logo">⚡ QUIZ</div>
   <div class="header-center">
@@ -430,15 +377,13 @@
       <div class="live-dot"></div>
       LIVE
     </div>
-    <div class="clock" id="clock">00:00:00</div>
+    <!-- 需求3: 移除系统时钟，改为轮次显示 -->
+    <div class="round-badge-header" id="roundBadgeHeader">ROUND 01</div>
   </div>
 </div>
 
-<!-- 主内容区 -->
 <div class="main-layout">
-  <!-- 左区 -->
   <div class="left-zone">
-    <!-- 轮次与状态 -->
     <div class="round-display">
       <div class="round-block">
         <div class="round-label">ROUND</div>
@@ -453,7 +398,6 @@
       </div>
     </div>
 
-    <!-- 优胜展示大区 -->
     <div class="winner-zone">
       <div id="emptyState" class="empty-winner">
         <div class="empty-icon">🎯</div>
@@ -463,72 +407,58 @@
 
       <div id="buzzingState" class="empty-winner" style="display:none;">
         <div class="buzzing-anim">🔔</div>
-        <div style="font-size:32px;font-weight:900;color:var(--green);text-shadow:0 0 30px rgba(0,255,136,0.6);margin-top:16px;">抢答开放中！</div>
+        <div style="font-size:36px;font-weight:900;color:var(--green);text-shadow:0 0 30px rgba(0,255,136,0.6);margin-top:16px;">抢答开放中！</div>
         <div style="font-size:16px;color:var(--muted);margin-top:8px;">等待选手响应…</div>
       </div>
 
+      <!-- 需求4: 放大的优胜展示卡片 -->
       <div class="winner-card" id="winnerCard" style="display:none;">
         <div class="winner-label">🏆 ROUND WINNER</div>
         <div class="winner-rank-badge">第一名抢答成功</div>
+        <!-- 放大的队名 -->
         <div class="winner-name-big" id="winnerNameBig">—</div>
-        <div class="winner-time-big" id="winnerTimeBig">—</div>
+        <!-- 需求3: 展示反应时长，不显示系统时间 -->
+        <div class="winner-reaction-time" id="winnerReactionTime">—</div>
+        <div class="winner-reaction-label">反 应 时 长</div>
         <div class="winner-members" id="winnerMembers"></div>
         <div class="buzz-others" id="buzzOthers"></div>
       </div>
     </div>
   </div>
 
-  <!-- 右区：排行榜 -->
   <div class="right-zone">
     <div class="rank-header">
       <div class="rank-header-title">📊 RANKING</div>
       <div class="total-teams" id="totalTeams">—</div>
     </div>
     <div class="rank-scroll-wrap">
-      <div class="rank-scroll" id="rankScroll">
-        <!-- 由JS填充两份以实现无缝滚动 -->
-      </div>
+      <div class="rank-scroll" id="rankScroll"></div>
     </div>
   </div>
 </div>
 
-<!-- 跑马灯 -->
 <div class="ticker">
   <div class="ticker-label">实时数据</div>
-  <div class="ticker-content" id="tickerContent">
-    <!-- 由JS填充 -->
-  </div>
+  <div class="ticker-content" id="tickerContent"></div>
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
-// const STORAGE_KEY = 'quizmaster_state';
-// const BC = new BroadcastChannel('quizmaster');
 const socket = io();
 let appState = defaultState();
 
-// 时钟
-function updateClock() {
-  document.getElementById('clock').textContent =
-    new Date().toLocaleTimeString('zh-CN', { hour12: false });
-}
-setInterval(updateClock, 1000);
-updateClock();
-
-// 获取状态
-// function getState() {
-//   try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || defaultState(); }
-//   catch(e) { return defaultState(); }
-// }
-function getState() {
-  return appState;
-}
-
 function defaultState() {
-  return { teams:[], round:1, buzzOpen:false, buzzList:[], scoredRound:false, history:[], onlineTeams:[] };
+  return { teams:[], round:1, buzzOpen:false, buzzOpenTs:0, buzzList:[], scoredRound:false, history:[], onlineTeams:[] };
+}
+function getState() { return appState; }
+
+// 需求3: 反应时长格式化
+function formatReactionTime(ms) {
+  if (!ms || ms <= 0) return '—';
+  if (ms < 1000) return `${ms} ms`;
+  return `${(ms / 1000).toFixed(3)} s`;
 }
 
-// 主渲染
 function render(s) {
   if (!s) s = getState();
   renderHeader(s);
@@ -538,10 +468,14 @@ function render(s) {
 }
 
 function renderHeader(s) {
-  document.getElementById('roundNum').textContent = String(s.round).padStart(2, '0');
+  const roundStr = String(s.round).padStart(2, '0');
+  document.getElementById('roundNum').textContent = roundStr;
+  // 需求3: 右上角改为轮次标识
+  document.getElementById('roundBadgeHeader').textContent = `ROUND ${roundStr}`;
+
   const icon = document.getElementById('statusIcon');
   const main = document.getElementById('statusMain');
-  const sub = document.getElementById('statusSub');
+  const sub  = document.getElementById('statusSub');
   if (s.buzzOpen && s.buzzList.length === 0) {
     icon.textContent = '🟢';
     main.textContent = '抢答进行中';
@@ -584,16 +518,20 @@ function renderWinnerZone(s) {
 
   const winner = s.buzzList[0];
   const winnerTeam = s.teams.find(t => t.id === winner.teamId);
+  const openTs = s.buzzOpenTs || 0;
+  const reactionMs = openTs > 0 ? (winner.ts - openTs) : 0;
 
+  // 重播入场动画
   const nameEl = document.getElementById('winnerNameBig');
   if (nameEl.textContent !== winner.teamName) {
     nameEl.style.animation = 'none';
-    nameEl.offsetHeight; // reflow
+    nameEl.offsetHeight;
     nameEl.style.animation = '';
   }
   nameEl.textContent = winner.teamName;
-  document.getElementById('winnerTimeBig').textContent =
-    new Date(winner.ts).toLocaleTimeString('zh-CN', { hour12:false, hour:'2-digit', minute:'2-digit', second:'2-digit', fractionalSecondDigits:3 });
+
+  // 需求3: 显示反应时长而非系统时间
+  document.getElementById('winnerReactionTime').textContent = formatReactionTime(reactionMs);
 
   if (winnerTeam && winnerTeam.members && winnerTeam.members.length) {
     document.getElementById('winnerMembers').textContent = '👥 ' + winnerTeam.members.join(' · ');
@@ -602,9 +540,10 @@ function renderWinnerZone(s) {
   }
 
   const others = s.buzzList.slice(1);
-  document.getElementById('buzzOthers').innerHTML = others.map((b, i) =>
-    `<div class="buzz-other-pill"><span style="color:var(--muted);">第${i+2}名</span> <span>${b.teamName}</span></div>`
-  ).join('');
+  document.getElementById('buzzOthers').innerHTML = others.map((b, i) => {
+    const rMs = openTs > 0 ? (b.ts - openTs) : 0;
+    return `<div class="buzz-other-pill"><span style="color:var(--muted);">第${i+2}名</span> <span>${b.teamName}</span> <span style="color:var(--muted);font-size:11px;">${formatReactionTime(rMs)}</span></div>`;
+  }).join('');
 }
 
 function renderRankList(s) {
@@ -618,12 +557,13 @@ function renderRankList(s) {
   }
 
   const sorted = [...s.teams].sort((a, b) => b.score - a.score);
-  const maxScore = Math.max(...sorted.map(t => t.score), 1);
+  // 需求1: 负分支持——分数条宽度以最大绝对值为基准，负分不画条
+  const maxScore = Math.max(...sorted.map(t => Math.abs(t.score)), 1);
   totalEl.textContent = `共 ${sorted.length} 支队伍`;
 
   const makeRows = () => sorted.map((t, i) => {
     const cls = i===0?'r1':i===1?'r2':i===2?'r3':'';
-    const barWidth = maxScore > 0 ? Math.round(t.score / maxScore * 100) : 0;
+    const barWidth = t.score > 0 ? Math.round(t.score / maxScore * 100) : 0;
     return `
       <div class="rank-row ${cls}">
         <div class="rank-pos ${cls}">${i+1}</div>
@@ -634,16 +574,14 @@ function renderRankList(s) {
             <div class="score-bar ${cls}" style="width:${barWidth}%"></div>
           </div>
         </div>
-        <div class="rank-score ${cls}">${t.score}</div>
+        <!-- 需求1: 负分显示红色 -->
+        <div class="rank-score ${cls} ${t.score < 0 ? 'negative' : ''}">${t.score}</div>
       </div>
     `;
   }).join('');
 
-  // 重复两遍实现无缝滚动
   el.innerHTML = makeRows() + makeRows();
 
-  // 动态调整滚动速度（队伍多则慢）
-  const totalHeight = sorted.length * 80; // 每行约80px
   const duration = Math.max(15, sorted.length * 4);
   el.style.animationDuration = duration + 's';
 }
@@ -659,7 +597,7 @@ function renderTicker(s) {
     `<div class="ticker-item">
       <span style="color:var(--muted);">#${i+1}</span>
       <span class="t-gold">${t.name}</span>
-      <span style="font-family:'Orbitron',sans-serif;color:var(--accent);">${t.score}分</span>
+      <span style="font-family:'Orbitron',sans-serif;color:${t.score < 0 ? 'var(--red)' : 'var(--accent)'};">${t.score}分</span>
     </div><div class="ticker-sep">·</div>`
   ).join('');
   const histItems = (s.history || []).slice(0, 5).map(h =>
@@ -670,30 +608,15 @@ function renderTicker(s) {
     </div><div class="ticker-sep">·</div>`
   ).join('');
   const full = items + histItems;
-  el.innerHTML = full + full; // 两份无缝滚动
+  el.innerHTML = full + full;
 }
-
-// ============================================================
-// 实时同步
-// ============================================================
-// BC.onmessage = (e) => {
-//   if (e.data.type === 'update') render(e.data.state);
-// };
-// window.addEventListener('storage', (e) => {
-//   if (e.key === STORAGE_KEY) {
-//     try { render(JSON.parse(e.newValue)); } catch(err) {}
-//   }
-// });
 
 socket.on('sync_state', (newState) => {
   appState = newState;
   render(appState);
 });
 
-// 初始化
 render();
-
-// 轮询保底（每2秒）
 setInterval(() => render(), 2000);
 </script>
 </body>

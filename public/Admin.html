@@ -29,6 +29,104 @@
       radial-gradient(ellipse at 20% 10%, rgba(0,212,255,0.06) 0%, transparent 50%),
       radial-gradient(ellipse at 80% 80%, rgba(255,107,53,0.05) 0%, transparent 50%);
   }
+
+  /* ============================================================
+     管理员登录页 (需求5)
+  ============================================================ */
+  .admin-login-overlay {
+    position: fixed; inset: 0;
+    background: var(--bg);
+    z-index: 999;
+    display: flex; align-items: center; justify-content: center;
+    background-image:
+      radial-gradient(ellipse at 50% 30%, rgba(0,212,255,0.1) 0%, transparent 60%);
+  }
+  .admin-login-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 48px 44px;
+    width: 420px;
+    max-width: 94vw;
+    text-align: center;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 100px rgba(0,212,255,0.06);
+  }
+  .admin-login-logo {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--accent);
+    text-shadow: 0 0 30px rgba(0,212,255,0.6);
+    letter-spacing: 3px;
+    margin-bottom: 6px;
+  }
+  .admin-login-sub {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 36px;
+  }
+  .admin-login-field {
+    position: relative;
+    margin-bottom: 14px;
+  }
+  .admin-login-field label {
+    display: block;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-align: left;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+  .admin-login-input {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 10px;
+    padding: 13px 16px;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 14px;
+    width: 100%;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    letter-spacing: 1px;
+  }
+  .admin-login-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 20px rgba(0,212,255,0.15);
+  }
+  .admin-login-btn {
+    width: 100%;
+    margin-top: 8px;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--accent), #0088bb);
+    color: #000;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 900;
+    font-family: 'Noto Sans SC', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 2px;
+    box-shadow: 0 6px 25px rgba(0,212,255,0.3);
+  }
+  .admin-login-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,212,255,0.4); }
+  .admin-login-err {
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--red);
+    min-height: 20px;
+    font-weight: 600;
+  }
+  .admin-lock-icon {
+    font-size: 48px;
+    margin-bottom: 20px;
+    display: block;
+  }
+
   /* 顶部导航 */
   .topbar {
     background: rgba(10,14,26,0.95);
@@ -113,13 +211,7 @@
     box-shadow: 0 0 10px var(--green);
     animation: pulse 1.5s infinite;
   }
-  .status-dot.warning {
-    background: var(--gold);
-    box-shadow: 0 0 10px var(--gold);
-  }
-  @keyframes pulse {
-    0%,100% { opacity: 1; } 50% { opacity: 0.4; }
-  }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
   .status-label { font-size: 13px; color: var(--muted); }
   .status-value { font-size: 13px; font-weight: 700; }
   /* 按钮 */
@@ -135,33 +227,14 @@
   }
   .btn:hover { transform: translateY(-1px); }
   .btn:active { transform: translateY(0); }
-  .btn-primary {
-    background: linear-gradient(135deg, var(--accent), #0099cc);
-    color: #000; box-shadow: 0 4px 15px rgba(0,212,255,0.3);
-  }
-  .btn-danger {
-    background: linear-gradient(135deg, var(--red), #cc0000);
-    color: white; box-shadow: 0 4px 15px rgba(255,68,68,0.3);
-  }
-  .btn-success {
-    background: linear-gradient(135deg, var(--green), #00aa55);
-    color: #000; box-shadow: 0 4px 15px rgba(0,230,118,0.3);
-  }
-  .btn-gold {
-    background: linear-gradient(135deg, var(--gold), #cc9900);
-    color: #000; box-shadow: 0 4px 15px rgba(255,215,0,0.3);
-  }
+  .btn-primary { background: linear-gradient(135deg, var(--accent), #0099cc); color: #000; box-shadow: 0 4px 15px rgba(0,212,255,0.3); }
+  .btn-danger { background: linear-gradient(135deg, var(--red), #cc0000); color: white; box-shadow: 0 4px 15px rgba(255,68,68,0.3); }
+  .btn-success { background: linear-gradient(135deg, var(--green), #00aa55); color: #000; box-shadow: 0 4px 15px rgba(0,230,118,0.3); }
+  .btn-gold { background: linear-gradient(135deg, var(--gold), #cc9900); color: #000; box-shadow: 0 4px 15px rgba(255,215,0,0.3); }
   .btn-sm { padding: 5px 10px; font-size: 12px; }
-  .btn-outline {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--muted);
-  }
+  .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--muted); }
   .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
-  .btn:disabled {
-    opacity: 0.4; cursor: not-allowed; transform: none;
-    box-shadow: none;
-  }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
   /* 大型抢答控制按钮 */
   .control-btn-open {
     width: 100%; padding: 16px;
@@ -211,27 +284,20 @@
     transition: border-color 0.2s;
   }
   .team-item:hover { border-color: var(--accent); }
-  .team-item-header {
-    display: flex; align-items: center;
-    justify-content: space-between;
-    margin-bottom: 6px;
-  }
-  .team-name {
-    font-weight: 700; font-size: 14px;
-    color: var(--accent);
-  }
+  .team-item-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+  .team-name { font-weight: 700; font-size: 14px; color: var(--accent); }
+  /* 需求1: 分数允许负值，负分显示红色 */
   .team-score {
     font-family: 'Orbitron', sans-serif;
-    font-size: 18px;
-    font-weight: 900;
+    font-size: 18px; font-weight: 900;
     color: var(--gold);
+    transition: color 0.3s;
   }
+  .team-score.negative { color: var(--red); }
   .team-members { font-size: 12px; color: var(--muted); }
   .team-actions { display: flex; gap: 6px; margin-top: 8px; }
   /* 成员编辑区 */
-  .member-chips {
-    display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0;
-  }
+  .member-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
   .member-chip {
     background: var(--surface2);
     border: 1px solid var(--border);
@@ -240,11 +306,72 @@
     font-size: 12px;
     display: flex; align-items: center; gap: 6px;
   }
-  .chip-del {
-    cursor: pointer; color: var(--red);
-    font-size: 14px; line-height: 1;
-  }
+  .chip-del { cursor: pointer; color: var(--red); font-size: 14px; line-height: 1; }
   .chip-del:hover { color: #ff6666; }
+
+  /* ============================================================
+     需求4: 抢答成功展示区域放大、字体加大、视觉更醒目
+  ============================================================ */
+  .buzz-winner {
+    background: linear-gradient(135deg, rgba(255,215,0,0.18), rgba(255,107,53,0.12));
+    border: 2px solid var(--gold);
+    border-radius: 14px;
+    padding: 24px 20px;
+    text-align: center;
+    margin-bottom: 14px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 30px rgba(255,215,0,0.15), inset 0 0 40px rgba(255,215,0,0.05);
+  }
+  .buzz-winner::before {
+    content: '';
+    position: absolute; top: 0; left: -100%;
+    width: 60%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,215,0,0.12), transparent);
+    animation: shine 2.5s infinite;
+  }
+  @keyframes shine { 0% { left: -100%; } 100% { left: 200%; } }
+  /* 放大后的优胜队标签 */
+  .winner-label {
+    font-size: 13px;
+    color: rgba(255,215,0,0.7);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  /* 放大队名：原28px → 48px */
+  .winner-name {
+    font-size: 48px;
+    font-weight: 900;
+    color: var(--gold);
+    margin: 8px 0;
+    line-height: 1.1;
+    text-shadow: 0 0 30px rgba(255,215,0,0.5), 0 0 60px rgba(255,215,0,0.2);
+    letter-spacing: 2px;
+    animation: winner-pop 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+  }
+  @keyframes winner-pop {
+    from { transform: scale(0.6); opacity: 0; }
+    to   { transform: scale(1);   opacity: 1; }
+  }
+  /* 需求3: 展示反应时长而非系统时间 */
+  .winner-time {
+    font-size: 22px;
+    font-weight: 700;
+    color: rgba(255,215,0,0.75);
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 2px;
+    margin-top: 4px;
+  }
+  .winner-time-label {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
   /* 抢答结果区 */
   .buzz-result {
     background: var(--bg);
@@ -253,30 +380,6 @@
     overflow: hidden;
     margin-bottom: 8px;
   }
-  .buzz-winner {
-    background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,107,53,0.1));
-    border: 1px solid var(--gold);
-    border-radius: 10px;
-    padding: 16px;
-    text-align: center;
-    margin-bottom: 12px;
-    position: relative;
-    overflow: hidden;
-  }
-  .buzz-winner::before {
-    content: '';
-    position: absolute; top: 0; left: -100%;
-    width: 60%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,215,0,0.1), transparent);
-    animation: shine 3s infinite;
-  }
-  @keyframes shine {
-    0% { left: -100%; } 100% { left: 200%; }
-  }
-  .winner-label { font-size: 11px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; }
-  .winner-name { font-size: 28px; font-weight: 900; color: var(--gold); margin: 4px 0; }
-  .winner-time { font-size: 12px; color: var(--muted); font-family: 'Orbitron', sans-serif; }
-  /* 抢答排序列表 */
   .buzz-row {
     display: flex; align-items: center;
     padding: 10px 14px;
@@ -295,7 +398,9 @@
   .buzz-rank.r2 { color: #c0c0c0; }
   .buzz-rank.r3 { color: #cd7f32; }
   .buzz-team { flex: 1; font-weight: 700; font-size: 14px; }
+  /* 需求3: 时间列显示反应时长 */
   .buzz-time { font-size: 11px; color: var(--muted); font-family: 'Orbitron', sans-serif; }
+
   /* 积分操作 */
   .score-control {
     background: linear-gradient(135deg, rgba(0,212,255,0.05), rgba(255,107,53,0.05));
@@ -331,6 +436,7 @@
     font-size: 16px; font-weight: 900;
     color: var(--accent);
   }
+  .rank-score.negative { color: var(--red); }
   /* 历史记录 */
   .history-item {
     padding: 8px 12px;
@@ -370,13 +476,8 @@
   .form-label { font-size: 12px; color: var(--muted); margin-bottom: 5px; display: block; }
   .form-group { margin-bottom: 12px; }
   /* 响应式 */
-  @media (max-width: 1200px) {
-    .main-grid { grid-template-columns: 280px 1fr; }
-    .right-col { display: none; }
-  }
-  @media (max-width: 800px) {
-    .main-grid { grid-template-columns: 1fr; }
-  }
+  @media (max-width: 1200px) { .main-grid { grid-template-columns: 280px 1fr; } .right-col { display: none; } }
+  @media (max-width: 800px) { .main-grid { grid-template-columns: 1fr; } }
   /* 通知 */
   .toast {
     position: fixed; top: 20px; right: 20px;
@@ -411,6 +512,29 @@
 </style>
 </head>
 <body>
+
+<!-- ============================================================
+     需求5: 管理员登录界面（固定账号密码验证）
+============================================================ -->
+<div class="admin-login-overlay" id="adminLoginOverlay">
+  <div class="admin-login-card">
+    <span class="admin-lock-icon">🔐</span>
+    <div class="admin-login-logo">QUIZ MASTER</div>
+    <div class="admin-login-sub">管理员登录</div>
+    <div class="admin-login-field">
+      <label>账号</label>
+      <input class="admin-login-input" id="adminUser" type="text" placeholder="请输入管理员账号" autocomplete="username"
+        onkeydown="if(event.key==='Enter')document.getElementById('adminPass').focus()">
+    </div>
+    <div class="admin-login-field">
+      <label>密码</label>
+      <input class="admin-login-input" id="adminPass" type="password" placeholder="请输入管理员密码" autocomplete="current-password"
+        onkeydown="if(event.key==='Enter')doAdminLogin()">
+    </div>
+    <button class="admin-login-btn" onclick="doAdminLogin()">登 录</button>
+    <div class="admin-login-err" id="adminLoginErr"></div>
+  </div>
+</div>
 
 <!-- 顶部导航 -->
 <div class="topbar">
@@ -450,15 +574,12 @@
         <span class="panel-title">🏆 队伍管理</span>
         <button class="btn btn-primary btn-sm" onclick="openAddTeam()">+ 新增队伍</button>
       </div>
-      <div class="panel-body" id="teamList">
-        <!-- 由JS渲染 -->
-      </div>
+      <div class="panel-body" id="teamList"></div>
     </div>
   </div>
 
   <!-- 中列：抢答控制 + 结果 -->
   <div>
-    <!-- 抢答控制 -->
     <div class="panel" style="margin-bottom:16px;">
       <div class="round-indicator">
         <div>
@@ -472,50 +593,46 @@
         </div>
       </div>
       <div class="panel-body">
-        <button class="control-btn-open" id="openBuzzBtn" onclick="openBuzz()">
-          ▶ 开 启 抢 答
-        </button>
-        <button class="control-btn-reset" onclick="resetBuzz()">
-          ↺ 重置本轮抢答状态
-        </button>
+        <button class="control-btn-open" id="openBuzzBtn" onclick="openBuzz()">▶ 开 启 抢 答</button>
+        <button class="control-btn-reset" onclick="resetBuzz()">↺ 重置本轮抢答状态</button>
       </div>
     </div>
 
-    <!-- 抢答结果 -->
     <div class="panel" style="margin-bottom:16px;">
       <div class="panel-header">
         <span class="panel-title">🎯 本轮抢答结果</span>
         <div id="buzzCount" style="font-size:12px;color:var(--muted);">等待抢答…</div>
       </div>
       <div class="panel-body">
-        <!-- 优胜队展示 -->
+        <!-- 需求4: 放大的优胜队展示区 -->
         <div class="buzz-winner" id="winnerDisplay" style="display:none;">
           <div class="winner-label">🏆 抢答成功</div>
           <div class="winner-name" id="winnerName">—</div>
-          <div class="winner-time" id="winnerTime">00:00.000</div>
+          <!-- 需求3: 显示反应时长，不显示系统时间 -->
+          <div class="winner-time" id="winnerTime">—</div>
+          <div class="winner-time-label">反应时长</div>
         </div>
 
-        <!-- 积分操作 -->
         <div class="score-control" id="scoreControl" style="display:none;">
           <div class="score-control-title">📊 裁判判分 — <span id="scoreTeamName" style="color:var(--gold)">—</span></div>
           <div class="score-btns">
             <button class="btn btn-success" onclick="addScore(10)">+10分</button>
             <button class="btn btn-success" onclick="addScore(5)">+5分</button>
             <button class="btn btn-success" onclick="addScore(1)">+1分</button>
+            <!-- 需求1: 扣分不设下限，允许负分 -->
             <button class="btn btn-danger" onclick="addScore(-5)">-5分</button>
             <button class="btn btn-danger" onclick="addScore(-1)">-1分</button>
             <button class="btn btn-outline" onclick="addScore(0)">跳过</button>
           </div>
           <div style="margin-top:10px;display:flex;gap:8px;align-items:center;">
-            <input class="input" id="customScore" type="number" placeholder="自定义分数" style="width:130px;">
-            <button class="btn btn-primary btn-sm" onclick="addCustomScore()">确认加分</button>
+            <input class="input" id="customScore" type="number" placeholder="自定义分数（可负）" style="width:160px;">
+            <button class="btn btn-primary btn-sm" onclick="addCustomScore()">确认</button>
           </div>
           <div style="margin-top:10px;font-size:12px;color:var(--muted);">
-            💡 判分完成后，系统将自动解锁下一轮抢答
+            💡 判分完成后系统自动解锁下一轮 · 支持负分
           </div>
         </div>
 
-        <!-- 抢答排序列表 -->
         <div class="buzz-result">
           <div id="buzzList">
             <div style="padding:24px;text-align:center;color:var(--muted);font-size:13px;">
@@ -526,7 +643,6 @@
       </div>
     </div>
 
-    <!-- 历史记录 -->
     <div class="panel">
       <div class="panel-header">
         <span class="panel-title">📋 历史记录</span>
@@ -545,9 +661,7 @@
         <span class="panel-title">📈 实时排行榜</span>
       </div>
       <div id="rankList">
-        <div style="padding:20px;text-align:center;color:var(--muted);font-size:13px;">
-          添加队伍后显示
-        </div>
+        <div style="padding:20px;text-align:center;color:var(--muted);font-size:13px;">添加队伍后显示</div>
       </div>
     </div>
   </div>
@@ -562,9 +676,10 @@
       <input class="input" id="teamNameInput" placeholder="请输入队伍名称">
     </div>
     <div class="form-group">
+      <!-- 需求2: Admin端成员管理同步支持姓名标记（成员录入格式对应） -->
       <label class="form-label">添加成员（输入后按Enter或点击添加）</label>
       <div class="input-group">
-        <input class="input" id="memberInput" placeholder="成员姓名" onkeydown="if(event.key==='Enter')addMemberChip()">
+        <input class="input" id="memberInput" placeholder="成员真实姓名" onkeydown="if(event.key==='Enter')addMemberChip()">
         <button class="btn btn-primary btn-sm" onclick="addMemberChip()">添加</button>
       </div>
       <div class="member-chips" id="memberChips"></div>
@@ -576,64 +691,76 @@
   </div>
 </div>
 
-<!-- Toast -->
 <div class="toast" id="toast"></div>
 
 <script src="/socket.io/socket.io.js"></script>
-
 <script>
 // ============================================================
-//  数据结构 & 全局状态
+//  需求5: 管理员登录验证（固定账号密码）
 // ============================================================
-// 建立与服务器的 WebSocket 连接
+const ADMIN_USER = 'zgtxmsc';
+const ADMIN_PASS = 'yyjhzzb';
+
+function doAdminLogin() {
+  const u = document.getElementById('adminUser').value.trim();
+  const p = document.getElementById('adminPass').value;
+  const errEl = document.getElementById('adminLoginErr');
+  if (u === ADMIN_USER && p === ADMIN_PASS) {
+    document.getElementById('adminLoginOverlay').style.display = 'none';
+    errEl.textContent = '';
+  } else {
+    errEl.textContent = '❌ 账号或密码错误，请重试';
+    document.getElementById('adminPass').value = '';
+    document.getElementById('adminPass').focus();
+    // 抖动效果
+    const card = document.querySelector('.admin-login-card');
+    card.style.animation = 'none';
+    card.offsetHeight;
+    card.style.animation = 'shake 0.4s ease';
+  }
+}
+
+// 页面加载时聚焦账号框
+window.addEventListener('load', () => {
+  document.getElementById('adminUser').focus();
+});
+
+// ============================================================
+//  Socket.io & 状态管理
+// ============================================================
 const socket = io();
-let appState = defaultState(); // 用变量替代本地存储
-  
-  // 移除这几行旧代码：
-// const STORAGE_KEY = 'quizmaster_state';
-// const BC = new BroadcastChannel('quizmaster');
+let appState = defaultState();
 
 let editingTeamId = null;
 let modalMembers = [];
 
-// 默认状态
 function defaultState() {
   return {
-    teams: [],           // [{id, name, members:[], score}]
-    round: 1,            // 当前轮次
-    buzzOpen: false,     // 本轮是否开放抢答
-    buzzList: [],        // 本轮抢答列表 [{teamId, teamName, ts}]
-    scoredRound: false,  // 本轮是否已判分
-    history: [],         // [{round, winner, delta}]
-    onlineTeams: [],     // 当前在线队伍名称列表
+    teams: [],
+    round: 1,
+    buzzOpen: false,
+    buzzOpenTs: 0,    // 需求3: 记录本轮开启抢答的时间戳
+    buzzList: [],
+    scoredRound: false,
+    history: [],
+    onlineTeams: [],
     lastUpdate: Date.now()
   };
 }
 
-// function getState() {
-//   try {
-//     const raw = localStorage.getItem(STORAGE_KEY);
-//     return raw ? JSON.parse(raw) : defaultState();
-//   } catch(e) { return defaultState(); }
-// }
-
-// function setState(s) {
-//   s.lastUpdate = Date.now();
-//   localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
-//   BC.postMessage({ type: 'update', state: s });
-//   render(s);
-// }
-
-function getState() {
-  return appState;
-}
+function getState() { return appState; }
 
 function setState(s) {
   s.lastUpdate = Date.now();
-  appState = s; // 更新本地变量
-  socket.emit('update_state', s); // 提交给服务器
+  appState = s;
+  socket.emit('update_state', s);
   render(s);
 }
+
+socket.on('sync_state', (newState) => {
+  appState = newState;
+  render(appState);
+});
 
 // ============================================================
 //  队伍管理
@@ -675,7 +802,7 @@ function removeMemberChip(name) {
 
 function renderModalChips() {
   document.getElementById('memberChips').innerHTML = modalMembers.map(m =>
-    `<div class="member-chip">${m}<span class="chip-del" onclick="removeMemberChip('${m}')">×</span></div>`
+    `<div class="member-chip">${m}<span class="chip-del" onclick="removeMemberChip('${m.replace(/'/g,"\\'")}')">×</span></div>`
   ).join('');
 }
 
@@ -704,9 +831,7 @@ function deleteTeam(id) {
   showToast('队伍已删除');
 }
 
-function closeModal() {
-  document.getElementById('teamModal').style.display = 'none';
-}
+function closeModal() { document.getElementById('teamModal').style.display = 'none'; }
 
 // ============================================================
 //  抢答控制
@@ -715,6 +840,7 @@ function openBuzz() {
   const s = getState();
   if (s.buzzOpen) return;
   s.buzzOpen = true;
+  s.buzzOpenTs = Date.now(); // 需求3: 记录开启时间戳
   s.buzzList = [];
   s.scoredRound = false;
   setState(s);
@@ -724,6 +850,7 @@ function openBuzz() {
 function resetBuzz() {
   const s = getState();
   s.buzzOpen = false;
+  s.buzzOpenTs = 0;
   s.buzzList = [];
   s.scoredRound = false;
   setState(s);
@@ -731,7 +858,7 @@ function resetBuzz() {
 }
 
 // ============================================================
-//  积分管理
+//  积分管理（需求1: 允许负分，移除 Math.max(0,...)）
 // ============================================================
 function addScore(delta) {
   const s = getState();
@@ -739,10 +866,10 @@ function addScore(delta) {
   const winner = s.buzzList[0];
   const team = s.teams.find(t => t.id === winner.teamId);
   if (!team) return;
-  
+
   if (delta !== 0) {
+    // 需求1: 直接加减，不做下限限制，允许负分
     team.score += delta;
-    if (team.score < 0) team.score = 0;
     s.history.unshift({
       round: s.round,
       winner: winner.teamName,
@@ -750,14 +877,16 @@ function addScore(delta) {
       time: new Date().toLocaleTimeString()
     });
   }
-  
-  // 自动进入下一轮
+
   s.round += 1;
   s.buzzOpen = false;
+  s.buzzOpenTs = 0;
   s.buzzList = [];
   s.scoredRound = true;
   setState(s);
-  showToast(delta !== 0 ? `✅ ${team.name} ${delta > 0 ? '+' : ''}${delta} 分，已进入第 ${s.round} 轮` : `⏭ 已跳过，进入第 ${s.round} 轮`, 'success');
+  showToast(delta !== 0
+    ? `✅ ${team.name} ${delta > 0 ? '+' : ''}${delta} 分，已进入第 ${s.round} 轮`
+    : `⏭ 已跳过，进入第 ${s.round} 轮`, 'success');
 }
 
 function addCustomScore() {
@@ -771,6 +900,26 @@ function clearHistory() {
   const s = getState();
   s.history = [];
   setState(s);
+}
+
+// 直接调整任意队伍分数（队伍列表中的快捷按钮，同样允许负分）
+function adjustScore(teamId, delta) {
+  const s = getState();
+  const t = s.teams.find(t => t.id === teamId);
+  if (!t) return;
+  t.score += delta; // 需求1: 无下限
+  setState(s);
+  showToast(`${t.name} ${delta > 0 ? '+' : ''}${delta} 分`);
+}
+
+// ============================================================
+//  需求3: 工具函数 — 将毫秒转为反应时长字符串
+// ============================================================
+function formatReactionTime(ms) {
+  if (!ms || ms <= 0) return '—';
+  if (ms < 1000) return `${ms} ms`;
+  const s = (ms / 1000).toFixed(3);
+  return `${s} s`;
 }
 
 // ============================================================
@@ -809,7 +958,6 @@ function renderStatusBar(s) {
     openBtn.disabled = false;
     openBtn.textContent = '▶ 开 启 抢 答';
   }
-  // 在线人数
   const onlineList = s.onlineTeams || [];
   document.getElementById('onlineCount').textContent = `在线: ${onlineList.length} 队`;
 }
@@ -824,7 +972,8 @@ function renderTeamList(s) {
     <div class="team-item">
       <div class="team-item-header">
         <span class="team-name">${t.name}</span>
-        <span class="team-score">${t.score}</span>
+        <!-- 需求1: 负分时显示红色 -->
+        <span class="team-score ${t.score < 0 ? 'negative' : ''}">${t.score}</span>
       </div>
       <div class="team-members">👥 ${t.members && t.members.length ? t.members.join('、') : '暂无成员'}</div>
       <div class="team-actions">
@@ -837,15 +986,6 @@ function renderTeamList(s) {
   `).join('');
 }
 
-function adjustScore(teamId, delta) {
-  const s = getState();
-  const t = s.teams.find(t => t.id === teamId);
-  if (!t) return;
-  t.score = Math.max(0, t.score + delta);
-  setState(s);
-  showToast(`${t.name} ${delta > 0 ? '+' : ''}${delta} 分`);
-}
-
 function renderBuzzArea(s) {
   const buzzCount = document.getElementById('buzzCount');
   const winnerDisplay = document.getElementById('winnerDisplay');
@@ -853,21 +993,26 @@ function renderBuzzArea(s) {
   const winnerTime = document.getElementById('winnerTime');
   const scoreControl = document.getElementById('scoreControl');
   const scoreTeamName = document.getElementById('scoreTeamName');
-  const buzzList = document.getElementById('buzzList');
+  const buzzListEl = document.getElementById('buzzList');
 
   if (!s.buzzList.length) {
     buzzCount.textContent = '等待抢答…';
     winnerDisplay.style.display = 'none';
     scoreControl.style.display = 'none';
-    buzzList.innerHTML = '<div style="padding:24px;text-align:center;color:var(--muted);font-size:13px;">开启抢答后，各队响应将实时显示于此</div>';
+    buzzListEl.innerHTML = '<div style="padding:24px;text-align:center;color:var(--muted);font-size:13px;">开启抢答后，各队响应将实时显示于此</div>';
     return;
   }
 
   buzzCount.textContent = `共 ${s.buzzList.length} 队抢答`;
   const winner = s.buzzList[0];
+
+  // 需求3: 计算并显示反应时长（从 buzzOpenTs 到 winner.ts 的差值）
+  const openTs = s.buzzOpenTs || 0;
+  const reactionMs = openTs > 0 ? (winner.ts - openTs) : 0;
+
   winnerDisplay.style.display = 'block';
   winnerName.textContent = winner.teamName;
-  winnerTime.textContent = new Date(winner.ts).toLocaleTimeString('zh-CN', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit', fractionalSecondDigits: 3 });
+  winnerTime.textContent = formatReactionTime(reactionMs);
 
   if (s.buzzOpen || !s.scoredRound) {
     scoreControl.style.display = 'block';
@@ -876,13 +1021,17 @@ function renderBuzzArea(s) {
     scoreControl.style.display = 'none';
   }
 
-  buzzList.innerHTML = s.buzzList.map((b, i) => `
-    <div class="buzz-row">
-      <div class="buzz-rank ${i===0?'r1':i===1?'r2':i===2?'r3':''}">${i+1}</div>
-      <div class="buzz-team">${b.teamName}</div>
-      <div class="buzz-time">${new Date(b.ts).toLocaleTimeString('zh-CN', { hour12:false, hour:'2-digit', minute:'2-digit', second:'2-digit', fractionalSecondDigits:3 })}</div>
-    </div>
-  `).join('');
+  // 需求3: 列表中也显示反应时长
+  buzzListEl.innerHTML = s.buzzList.map((b, i) => {
+    const rMs = openTs > 0 ? (b.ts - openTs) : 0;
+    return `
+      <div class="buzz-row">
+        <div class="buzz-rank ${i===0?'r1':i===1?'r2':i===2?'r3':''}">${i+1}</div>
+        <div class="buzz-team">${b.teamName}</div>
+        <div class="buzz-time">${formatReactionTime(rMs)}</div>
+      </div>
+    `;
+  }).join('');
 }
 
 function renderRankList(s) {
@@ -896,7 +1045,7 @@ function renderRankList(s) {
     <div class="rank-row">
       <div class="rank-num ${i===0?'r1':i===1?'r2':i===2?'r3':''}">${i+1}</div>
       <div class="rank-name">${t.name}</div>
-      <div class="rank-score">${t.score}</div>
+      <div class="rank-score ${t.score < 0 ? 'negative' : ''}">${t.score}</div>
     </div>
   `).join('');
 }
@@ -919,9 +1068,6 @@ function renderHistory(s) {
   `).join('');
 }
 
-// ============================================================
-//  Toast 通知
-// ============================================================
 function showToast(msg, type = '') {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -930,37 +1076,21 @@ function showToast(msg, type = '') {
   t._timer = setTimeout(() => t.classList.remove('show'), 2800);
 }
 
-// ============================================================
-//  BroadcastChannel 监听
-// ============================================================
-// BC.onmessage = (e) => {
-//   if (e.data.type === 'update') {
-//     render(e.data.state);
-//   }
-// };
-
-// // storage 事件（跨标签页同步，适合局域网下同设备多标签）
-// window.addEventListener('storage', (e) => {
-//   if (e.key === STORAGE_KEY) {
-//     try {
-//       const s = JSON.parse(e.newValue);
-//       render(s);
-//     } catch(err) {}
-//   }
-// });
-
-// 监听服务器下发的最新状态
-socket.on('sync_state', (newState) => {
-  appState = newState;
-  render(appState);
-});
-
 function openHelp() {
-  alert(`📖 使用说明\n\n1. 先在「队伍管理」新增队伍和成员\n2. 点击「开启抢答」开放本轮\n3. 队员端点击抢答按钮，结果实时显示\n4. 判分后系统自动进入下一轮\n\n⚙️ 局域网使用：\n• 所有设备使用同一浏览器内核，打开同一文件夹的HTML即可同步\n• 推荐使用VS Code Live Server插件，所有设备访问同一IP地址`);
+  alert('📖 使用说明\n\n1. 先在「队伍管理」新增队伍和成员\n2. 点击「开启抢答」开放本轮\n3. 队员端点击抢答按钮，结果实时显示\n4. 判分（支持负分）后系统自动进入下一轮\n\n账号: zgtxmsc  密码: yyjhzzb');
 }
 
-// 初始化
-render(getState());
+render(defaultState());
 </script>
+
+<style>
+  @keyframes shake {
+    0%,100%{transform:translateX(0)}
+    20%{transform:translateX(-10px)}
+    40%{transform:translateX(10px)}
+    60%{transform:translateX(-6px)}
+    80%{transform:translateX(6px)}
+  }
+</style>
 </body>
 </html>
