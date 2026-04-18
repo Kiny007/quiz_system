@@ -113,56 +113,63 @@
 
   /* ── 全屏抢答覆盖层 ── */
   /*
-   * iOS Safari 修复：
-   * 不使用 display:none ↔ display:block 切换。
-   * iOS WebKit 在 display 切换时存在渲染树不刷新的 bug，
-   * 会导致元素"不可见但可点击"。
-   * 改用 opacity + visibility + pointer-events 三属性组合：
-   *   - opacity:0        → 视觉不可见
-   *   - visibility:hidden → 不参与渲染（辅助技术也感知不到）
-   *   - pointer-events:none → 不响应任何触摸/点击事件
-   * display 始终保持 block，WebKit 无需重新计算布局树，
-   * 从根本上规避该渲染 bug。
+   * iOS Safari 三重修复：
+   *
+   * 1. display 不切换：始终 block/flex，避免 WebKit 渲染树重算 bug
+   *    （display:none 切换会导致"不可见但可点击"）
+   *
+   * 2. animation 只在 .show 激活时运行：
+   *    隐藏状态下保持 animation:none，防止 iOS GPU 合成线程为
+   *    带动画元素提前建立 compositing layer，导致 visibility:hidden 失效
+   *
+   * 3. 使用 opacity + visibility + pointer-events 三属性组合控制显隐：
+   *    - opacity:0         → 视觉不可见
+   *    - visibility:hidden → 辅助渲染层也不参与
+   *    - pointer-events:none → 不响应任何触摸/点击
    */
   .fs-overlay{
     position:fixed;inset:0;z-index:400;
-    display:block;            /* 始终 block，不切换 display */
+    display:block;
     cursor:pointer;
     background:transparent;
-    box-shadow:inset 0 0 80px rgba(0,230,118,.08);
-    animation:fspulse 1.2s ease-in-out infinite;
-    /* 默认：不可见 + 不可点击 */
+    /* 隐藏时：无动画（关键！防止 iOS GPU layer 提前建立） */
+    animation:none;
     opacity:0;
     visibility:hidden;
     pointer-events:none;
     transition:opacity .15s, visibility .15s;
   }
-  /* 激活：可见 + 可点击 */
   .fs-overlay.show{
     opacity:1;
     visibility:visible;
     pointer-events:auto;
+    /* 激活时才运行动画 */
+    animation:fspulse 1.2s ease-in-out infinite;
   }
-  @keyframes fspulse{0%,100%{box-shadow:inset 0 0 80px rgba(0,230,118,.06)}50%{box-shadow:inset 0 0 120px rgba(0,230,118,.14)}}
+  @keyframes fspulse{
+    0%,100%{box-shadow:inset 0 0 80px rgba(0,230,118,.06)}
+    50%{box-shadow:inset 0 0 120px rgba(0,230,118,.14)}
+  }
 
   .fs-hint{
     position:fixed;bottom:0;left:0;right:0;height:48px;
     background:linear-gradient(90deg,rgba(0,230,118,.15),rgba(0,212,255,.1),rgba(0,230,118,.15));
     border-top:1px solid rgba(0,230,118,.3);
-    display:flex;             /* 始终 flex，不切换 display */
+    display:flex;
     align-items:center;justify-content:center;
     font-size:13px;color:var(--green);font-weight:700;letter-spacing:2px;z-index:401;
-    animation:blink .9s infinite;
-    pointer-events:none;      /* 提示条本身永远不拦截点击 */
-    /* 默认：不可见 */
+    pointer-events:none;
+    /* 隐藏时：无动画 */
+    animation:none;
     opacity:0;
     visibility:hidden;
     transition:opacity .15s, visibility .15s;
   }
-  /* 激活：可见（pointer-events 保持 none，不拦截点击） */
   .fs-hint.show{
     opacity:1;
     visibility:visible;
+    /* 激活时才闪烁 */
+    animation:blink .9s infinite;
   }
 
   /* ── 抢答成功强提示浮层 ── */
@@ -335,43 +342,50 @@ function doLogout() {
 //  Socket 事件
 // ============================================================
 socket.on('join_room_ok', ({ roomId }) => {
-  // 加入成功后，从状态里找队伍 ID（等 sync_state 到了再完成）
-  // 先切换页面
   document.getElementById('loginErr').textContent = '';
-  // 注意：此时可能 appState 还没来，等 sync_state 再做队伍验证
+  // join_room_ok 之后服务端会紧接着发一次 sync_state
+  // 用 once 接收这第一帧来做队伍验证
   socket.once('sync_state', (s) => {
-    // 在服务端状态里找队伍
     const team = s.teams.find(t => t.name === myTeamName);
     if (!team) {
       document.getElementById('loginErr').textContent = `❌ 房间 ${roomId} 中未找到队伍「${myTeamName}」`;
       myTeamName=''; myTeamId=null; myRealName='';
       return;
     }
-    // 验证成员
     if (team.members?.length && !team.members.includes(myRealName)) {
       document.getElementById('loginErr').textContent = `❌「${myRealName}」不在队伍「${myTeamName}」成员名单中`;
       myTeamName=''; myTeamId=null; myRealName='';
       return;
     }
+
     myTeamId = team.id;
-    appState = s;
-    // 切换界面
+    appState  = s;
+
+    // 初始化 prevBuzzOpen，与当前状态对齐，
+    // 避免登录后第一次 render 把"已开放"误判为"刚开放"
+    prevBuzzOpen = s.buzzOpen;
+
     document.getElementById('loginPage').style.display = 'none';
     document.getElementById('mainPage').style.display  = 'flex';
-    document.getElementById('myTeamDisp').textContent = `${myTeamName} · ${myRealName}`;
-    // 上报在线
+    document.getElementById('myTeamDisp').textContent  = `${myTeamName} · ${myRealName}`;
+
     socket.emit('action_online', { teamName: myTeamName, action: 'join' });
     render(s);
     showToast(`欢迎，${myRealName}（${myTeamName}）！`);
-    // 恢复通用 sync_state 监听
-    socket.on('sync_state', (st) => { appState=st; render(st); });
+
+    // 如果加入时抢答已经开放，立刻激活覆盖层
+    // （这里是用户主动点击登录触发的，满足 iOS 的"用户手势"要求）
+    if (s.buzzOpen && !s.buzzList?.find(b => b.teamId === myTeamId)) {
+      showFsOverlay();
+    }
   });
 });
 
-// 通用 sync_state（加入前的广播，登录成功后 once 替换掉第一次，再重挂）
+// 通用 sync_state 监听（全局只注册一次，登录前 myTeamId 为 null 时自动忽略）
 socket.on('sync_state', (s) => {
-  if (!myTeamId) return; // 未登录时忽略
-  appState = s; render(s);
+  if (!myTeamId) return;
+  appState = s;
+  render(s);
 });
 
 // 抢答成功强提示
@@ -418,19 +432,33 @@ function doBuzz() {
 //  全屏覆盖层
 // ============================================================
 function showFsOverlay() {
-  // 请求全屏（iOS Safari 不支持 requestFullscreen，静默忽略）
-  const el = document.documentElement;
-  (el.requestFullscreen||el.webkitRequestFullscreen||el.mozRequestFullScreen||el.msRequestFullscreen||function(){})
-    .call(el).catch(()=>{});
-
   const overlay = document.getElementById('fsOverlay');
   const hint    = document.getElementById('fsHint');
+
+  // 先显示覆盖层（同步操作，不依赖全屏结果）
   overlay.classList.add('show');
   hint.classList.add('show');
 
-  // 强制 iOS WebKit 立即刷新渲染树（读取布局属性触发 reflow）
+  // 强制 iOS WebKit 立即刷新渲染树
   void overlay.offsetHeight;
+
+  // 全屏请求与覆盖层显示完全解耦：
+  // iOS Safari 要求 requestFullscreen 必须在用户手势回调中直接调用。
+  // 若在 socket 回调（非用户手势）中调用，iOS 会拒绝并抛 rejection。
+  // 之前 rejection 被 .catch 吃掉后，部分 WebKit 版本会中断后续同步代码。
+  // 现在把全屏请求放在独立的 try/catch 里，失败不影响覆盖层显示。
+  try {
+    const el  = document.documentElement;
+    const req = el.requestFullscreen
+              || el.webkitRequestFullscreen
+              || el.mozRequestFullScreen
+              || el.msRequestFullscreen;
+    if (req) req.call(el).catch(() => {});
+  } catch(e) {
+    // iOS Safari 在非用户手势时直接 throw，静默忽略
+  }
 }
+
 function hideFsOverlay() {
   document.getElementById('fsOverlay').classList.remove('show');
   document.getElementById('fsHint').classList.remove('show');
@@ -457,11 +485,16 @@ function render(s) {
   // 轮次切换 → 重置抢答标记
   if (s.round !== lastRound) { hasBuzzed = false; lastRound = s.round; }
 
-  // 全屏覆盖层逻辑
+  // 全屏覆盖层：用"当前状态"判定（level detection），而非"边沿跳变"（edge detection）
+  // 原来的 !prevBuzzOpen 边沿检测在 iOS 下不可靠：
+  //   - socket 回调乱序时 prevBuzzOpen 可能已经是 true，导致条件永远不满足
+  //   - 改为：只要 buzzOpen=true 且本人未抢答，就应该显示覆盖层
   const alreadyBuzzed = !!s.buzzList?.find(b => b.teamId === myTeamId);
-  if (s.buzzOpen && !prevBuzzOpen && !alreadyBuzzed && !hasBuzzed) {
+  const shouldShow    = s.buzzOpen && !alreadyBuzzed && !hasBuzzed;
+
+  if (shouldShow) {
     showFsOverlay();
-  } else if (!s.buzzOpen || alreadyBuzzed || hasBuzzed) {
+  } else {
     hideFsOverlay();
   }
   prevBuzzOpen = s.buzzOpen;
@@ -470,8 +503,8 @@ function render(s) {
   renderResult(s);
   renderRank(s);
   renderHist(s);
-  document.getElementById('roundVal').textContent  = String(s.round).padStart(2,'0');
-  document.getElementById('roundTag').textContent  = `R${String(s.round).padStart(2,'0')}`;
+  document.getElementById('roundVal').textContent = String(s.round).padStart(2,'0');
+  document.getElementById('roundTag').textContent = `R${String(s.round).padStart(2,'0')}`;
 }
 
 function renderBuzzBtn(s) {
