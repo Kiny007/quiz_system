@@ -112,17 +112,58 @@
   .toast.show{transform:translateX(-50%) translateY(0);}
 
   /* ── 全屏抢答覆盖层 ── */
-  .fs-overlay{position:fixed;inset:0;z-index:400;display:none;cursor:pointer;
-    background:transparent;box-shadow:inset 0 0 80px rgba(0,230,118,.08);
-    animation:fspulse 1.2s ease-in-out infinite;}
-  .fs-overlay.show{display:block;}
+  /*
+   * iOS Safari 修复：
+   * 不使用 display:none ↔ display:block 切换。
+   * iOS WebKit 在 display 切换时存在渲染树不刷新的 bug，
+   * 会导致元素"不可见但可点击"。
+   * 改用 opacity + visibility + pointer-events 三属性组合：
+   *   - opacity:0        → 视觉不可见
+   *   - visibility:hidden → 不参与渲染（辅助技术也感知不到）
+   *   - pointer-events:none → 不响应任何触摸/点击事件
+   * display 始终保持 block，WebKit 无需重新计算布局树，
+   * 从根本上规避该渲染 bug。
+   */
+  .fs-overlay{
+    position:fixed;inset:0;z-index:400;
+    display:block;            /* 始终 block，不切换 display */
+    cursor:pointer;
+    background:transparent;
+    box-shadow:inset 0 0 80px rgba(0,230,118,.08);
+    animation:fspulse 1.2s ease-in-out infinite;
+    /* 默认：不可见 + 不可点击 */
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+    transition:opacity .15s, visibility .15s;
+  }
+  /* 激活：可见 + 可点击 */
+  .fs-overlay.show{
+    opacity:1;
+    visibility:visible;
+    pointer-events:auto;
+  }
   @keyframes fspulse{0%,100%{box-shadow:inset 0 0 80px rgba(0,230,118,.06)}50%{box-shadow:inset 0 0 120px rgba(0,230,118,.14)}}
-  .fs-hint{position:fixed;bottom:0;left:0;right:0;height:48px;
+
+  .fs-hint{
+    position:fixed;bottom:0;left:0;right:0;height:48px;
     background:linear-gradient(90deg,rgba(0,230,118,.15),rgba(0,212,255,.1),rgba(0,230,118,.15));
-    border-top:1px solid rgba(0,230,118,.3);display:none;align-items:center;justify-content:center;
+    border-top:1px solid rgba(0,230,118,.3);
+    display:flex;             /* 始终 flex，不切换 display */
+    align-items:center;justify-content:center;
     font-size:13px;color:var(--green);font-weight:700;letter-spacing:2px;z-index:401;
-    animation:blink .9s infinite;pointer-events:none;}
-  .fs-hint.show{display:flex;}
+    animation:blink .9s infinite;
+    pointer-events:none;      /* 提示条本身永远不拦截点击 */
+    /* 默认：不可见 */
+    opacity:0;
+    visibility:hidden;
+    transition:opacity .15s, visibility .15s;
+  }
+  /* 激活：可见（pointer-events 保持 none，不拦截点击） */
+  .fs-hint.show{
+    opacity:1;
+    visibility:visible;
+  }
 
   /* ── 抢答成功强提示浮层 ── */
   .alert-overlay{position:fixed;inset:0;z-index:500;display:none;align-items:center;justify-content:center;
@@ -377,12 +418,18 @@ function doBuzz() {
 //  全屏覆盖层
 // ============================================================
 function showFsOverlay() {
-  // 请求全屏
+  // 请求全屏（iOS Safari 不支持 requestFullscreen，静默忽略）
   const el = document.documentElement;
   (el.requestFullscreen||el.webkitRequestFullscreen||el.mozRequestFullScreen||el.msRequestFullscreen||function(){})
     .call(el).catch(()=>{});
-  document.getElementById('fsOverlay').classList.add('show');
-  document.getElementById('fsHint').classList.add('show');
+
+  const overlay = document.getElementById('fsOverlay');
+  const hint    = document.getElementById('fsHint');
+  overlay.classList.add('show');
+  hint.classList.add('show');
+
+  // 强制 iOS WebKit 立即刷新渲染树（读取布局属性触发 reflow）
+  void overlay.offsetHeight;
 }
 function hideFsOverlay() {
   document.getElementById('fsOverlay').classList.remove('show');
